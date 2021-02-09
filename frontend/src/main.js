@@ -25,6 +25,7 @@ Vue.use(VueTimeago, {
     locale: 'en' // Default locale
 });
 
+
 new Vue({
     router,
     store,

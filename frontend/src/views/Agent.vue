@@ -27,6 +27,9 @@
       <span v-if="editing">
         <div class="form-group">
           <label for="token"><strong>Token</strong></label>
+          <small style="margin-left: 10px">
+            Use this token in the configuration file of the agent.
+          </small>
           <input
               v-model="agent.token"
               type="text"

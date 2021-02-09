@@ -1,7 +1,22 @@
 <template>
   <div class="home-container container-fluid">
-      <h3>Home</h3>
-      <p>{{content}}</p>
+    <div class="jumbotron">
+      <h1 class="display-4">
+        <img src="/logo.png" width="50px"/>
+        shieldwall!
+      </h1>
+      <br/>
+      <p class="lead">
+        Shieldwall is a free service you can use in order to secure your most private servers. Every agent connects to our API and fetch a list of the IP addresses you allowed to navigate the host and block the inbound traffic from every other source.
+      </p>
+      <hr class="my-4">
+      <p>Start using it for free!</p>
+      <p class="lead">
+        <a class="btn btn-primary btn-lg" href="/register" role="button">
+          Create an Account
+        </a>
+      </p>
+    </div>
   </div>
 </template>
 

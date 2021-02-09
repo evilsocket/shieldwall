@@ -2,13 +2,6 @@
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-dark">
       <a class="navbar-brand" href="/">shieldwall</a>
-      <!--
-      <div class="navbar-nav mr-auto">
-        <li v-if="showAgentsBoard" class="nav-item">
-          <router-link to="/agents" class="nav-link">Agents</router-link>
-        </li>
-      </div>
-      -->
 
       <div v-if="!currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
