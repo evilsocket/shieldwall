@@ -3,6 +3,13 @@
     <nav class="navbar navbar-expand navbar-dark bg-dark">
       <a class="navbar-brand" href="/">shieldwall</a>
 
+      <div class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <router-link to="/docs" class="nav-link">Docs</router-link>
+        </li>
+      </div>
+
+
       <div v-if="!currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/register" class="nav-link">

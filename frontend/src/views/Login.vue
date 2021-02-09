@@ -48,6 +48,11 @@
         </div>
       </form>
     </div>
+
+    <center>
+      Don't have an account? <br/>
+      <a href="/register">Sign up for free!</a>
+    </center>
   </div>
 </template>
 
@@ -131,8 +136,5 @@ label {
   height: 96px;
   margin: 0 auto 10px;
   display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
 }
 </style>

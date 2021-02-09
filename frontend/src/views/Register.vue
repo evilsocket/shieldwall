@@ -60,6 +60,11 @@
       >{{ message }}
       </div>
     </div>
+
+    <center>
+      Already have an account? <br/>
+      <a href="/login">Login in here!</a>
+    </center>
   </div>
 </template>
 
@@ -152,8 +157,5 @@ label {
   height: 96px;
   margin: 0 auto 10px;
   display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
 }
 </style>
