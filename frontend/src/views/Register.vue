@@ -38,8 +38,17 @@
             >{{ errors.first('password') }}
             </div>
           </div>
+
+
+
           <div class="form-group">
-            <button class="btn btn-primary btn-block">Sign Up</button>
+            <vue-recaptcha
+                ref="recaptcha"
+                @verify="onCaptchaVerified"
+                @expired="onCaptchaExpired"
+                sitekey="6LfJA0gUAAAAAA4YDXBubWMll55x5xLpyzu6n60G">
+              <button class="btn btn-primary btn-block">Sign Up</button>
+            </vue-recaptcha>
           </div>
         </div>
       </form>
@@ -56,9 +65,12 @@
 
 <script>
 import User from '../models/user';
+import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   name: 'Register',
+  components: { VueRecaptcha },
+
   data() {
     return {
       user: new User('', ''),
@@ -98,6 +110,14 @@ export default {
           );
         }
       });
+    },
+
+    onCaptchaExpired: function () {
+      this.$refs.recaptcha.reset();
+    },
+
+    onCaptchaVerified: function () {
+      this.handleRegister();
     }
   }
 };
