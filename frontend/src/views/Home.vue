@@ -12,10 +12,11 @@
       <hr class="my-4">
       <p>Every agent connects to our API
         and fetch a list of the IP addresses you allowed to navigate the host and block the inbound traffic from
-        every other source. Start using it for free!</p>
-      <p class="lead">
-        <a class="btn btn-primary btn-lg" href="/register" role="button">
-          Create an Account
+        every other source.</p>
+      <p class="lead" v-if="!currentUser">
+        <br/>
+        <a class="btn btn-primary btn" href="/register" role="button">
+          Create a Free Account
         </a>
       </p>
     </div>
@@ -26,6 +27,11 @@
 
 export default {
   name: 'Home',
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   mounted() {
 
   }

@@ -56,11 +56,6 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     },
-    /*
-    showAgentsBoard() {
-      return !!this.currentUser;
-    },
-     */
   },
   methods: {
     logOut() {
