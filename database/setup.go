@@ -33,3 +33,7 @@ func Setup(config Config) (err error) {
 	}
 	return
 }
+
+func Delete(v interface{}) error {
+	return db.Delete(v).Error
+}

@@ -2,31 +2,15 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/database"
 	"io"
 	"net/http"
-	"time"
 )
 
 type UserLoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-}
-
-func (api *API) tokenFor(user *database.User) (string, error) {
-	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["user_id"] = user.ID
-	claims["expires_at"] = time.Now().Add(time.Duration(api.config.TokenTTL) * time.Second).Format(time.RFC3339)
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString([]byte(api.config.Secret))
-	if err != nil {
-		return "", err
-	}
-	return signed, nil
 }
 
 func (api *API) UserLogin(w http.ResponseWriter, r *http.Request) {

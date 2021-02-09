@@ -30,7 +30,7 @@ type User struct {
 	Agents       []Agent
 }
 
-func makeVerification() string {
+func makeRandomToken() string {
 	randomShit := make([]byte, 128)
 	rand.Read(randomShit)
 
@@ -64,7 +64,7 @@ func RegisterUser(address, email, password string) (*User, error) {
 
 	newUser := User{
 		Email:        email,
-		Verification: makeVerification(),
+		Verification: makeRandomToken(),
 		Hash:         string(hashedPassword),
 		Address:      address,
 	}
@@ -106,5 +106,15 @@ func LoginUser(address, email, password string) (*User, error) {
 		log.Error("error updating logged in user: %v", err)
 	}
 
+	return &found, nil
+}
+
+func FindUserByID(id int) (*User, error) {
+	var found User
+	if err := db.Preload("Agents").Find(&found, id).Error; err == gorm.ErrRecordNotFound {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
 	return &found, nil
 }

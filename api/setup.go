@@ -46,6 +46,16 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 				r.Post("/register", api.UserRegister)
 				r.Get("/verify/{verification:[A-Fa-f0-9]{64}}", api.UserVerify)
 				r.Post("/login", api.UserLogin)
+
+				r.Route("/agents", func(r chi.Router) {
+					r.Put("/new", api.UserCreateAgent)
+
+					r.Get("/", api.UserGetAgents)
+					r.Get("/{id:[0-9]+}", api.UserGetAgent)
+
+					r.Put("/{id:[0-9]+}", api.UserUpdateAgent)
+					r.Delete("/{id:[0-9]+}", api.UserDeleteAgent)
+				})
 			})
 		})
 	})
