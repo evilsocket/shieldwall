@@ -8,7 +8,10 @@
             class="form-control"
             name="created_at"
             id="created_at"
-        >{{ currentUser.data.created_at }}</span>
+            readonly="true"
+        >
+          <timeago :datetime="currentUser.data.created_at " :auto-update="60"></timeago>
+        </span>
       </div>
       <div class="form-group">
         <label for="email"><strong>Email</strong></label>
@@ -16,6 +19,7 @@
             class="form-control"
             name="email"
             id="email"
+            readonly="true"
         >{{ currentUser.data.email }}</span>
       </div>
       <div class="form-group">
@@ -24,6 +28,7 @@
             class="form-control"
             name="address"
             id="address"
+            readonly="true"
         >{{ currentUser.data.address }}</span>
       </div>
       <div class="form-group">
@@ -97,7 +102,7 @@ export default {
 
         if (this.new_password.length >= 8) {
           UserService.update(this.new_password).then(
-              response => {
+              () => {
                 this.loading = false;
                 this.message = 'Password updated.';
               },

@@ -9,6 +9,7 @@ import Vuex from 'vuex';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {faDesktop, faHome, faSignInAlt, faSignOutAlt, faUser, faUserPlus} from '@fortawesome/free-solid-svg-icons';
+import VueTimeago from 'vue-timeago'
 
 library.add(faHome, faUser, faDesktop, faUserPlus, faSignInAlt, faSignOutAlt);
 
@@ -18,6 +19,11 @@ Vue.use(VeeValidate);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(Vuex);
+
+Vue.use(VueTimeago, {
+    name: 'Timeago', // Component name, `Timeago` by default
+    locale: 'en' // Default locale
+});
 
 new Vue({
     router,

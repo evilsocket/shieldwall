@@ -29,7 +29,6 @@ export default {
           this.$router.push('/login');
         },
         error => {
-          console.log(error.response);
           this.status = '';
           this.error =
               (error.response && error.response.data && error.response.data.error) ||

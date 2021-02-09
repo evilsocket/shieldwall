@@ -20,7 +20,7 @@
       <thead class="thead-dark">
       <tr>
         <th scope="col">Created</th>
-        <th scope="col">Last Update</th>
+        <th scope="col" class="fit">Last Update</th>
         <th scope="col">Name</th>
         <th scope="col">Address</th>
         <th scope="col">Info</th>
@@ -31,9 +31,17 @@
 
       <tbody>
       <tr v-for="agent in agents" :key="agent.name">
-        <td class="fit">{{ agent.created_at }}</td>
-        <td class="fit">{{ agent.updated_at }}</td>
-        <td>{{ agent.name }}</td>
+        <td class="fit">
+          <timeago :datetime="agent.created_at" :auto-update="60"></timeago>
+        </td>
+        <td class="fit">
+          <timeago :datetime="agent.updated_at" :auto-update="60"></timeago>
+        </td>
+        <td>
+          <a :href="'/agent/' + agent.id">
+            {{ agent.name }}
+          </a>
+        </td>
         <td class="fit">{{ agent.address }}</td>
         <td class="fit">
           <small>{{ agent.user_agent }}</small>
@@ -42,13 +50,8 @@
           <span class="badge badge-info">{{ agent.rules.length }}</span>
         </td>
         <td class="fit">
-          <a class="btn btn-sm btn-light" :href="'/agent/' + agent.id">
-            v
-          </a>
-          &nbsp;
-          <a class="btn btn-sm btn-danger" href="#"
-             v-on:click="handleAgentDelete(agent)">
-            d
+          <a class="btn btn-sm btn-danger" href="#" v-on:click="handleAgentDelete(agent)">
+            x
           </a>
         </td>
       </tr>
@@ -99,20 +102,20 @@ export default {
 
   methods: {
     handleAgentDelete(agent) {
-        if (confirm("Are you sure you want to delete " + agent.name + ' ?')) {
+      if (confirm("Are you sure you want to delete " + agent.name + ' ?')) {
 
-          UserService.deleteAgent(agent.id).then(
-              response => {
-                this.$router.go(this.$router.currentRoute);
-              },
-              error => {
-                this.error =
-                    (error.response && error.response.data && error.response.data.error) ||
-                    error.message ||
-                    error.toString();
-              }
-          );
-        }
+        UserService.deleteAgent(agent.id).then(
+            () => {
+              this.$router.go(this.$router.currentRoute);
+            },
+            error => {
+              this.error =
+                  (error.response && error.response.data && error.response.data.error) ||
+                  error.message ||
+                  error.toString();
+            }
+        );
+      }
     }
   }
 };

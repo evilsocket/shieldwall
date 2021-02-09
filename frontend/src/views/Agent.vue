@@ -98,8 +98,7 @@
             </td>
 
             <td class="fit">
-              <a class="btn btn-sm btn-danger" href="#"
-                 v-on:click="handleRuleDelete(agent.rules.indexOf(rule))">
+              <a class="btn btn-sm btn-danger" href="#" v-on:click="handleRuleDelete(agent.rules.indexOf(rule))">
                 x
               </a>
             </td>
