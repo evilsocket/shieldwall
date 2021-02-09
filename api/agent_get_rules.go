@@ -3,9 +3,18 @@ package api
 import (
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/database"
+	"gorm.io/datatypes"
 	"net/http"
+	"sync"
 	"time"
 )
+
+type cachedRules struct {
+	CachedAt time.Time
+	Rules    datatypes.JSON
+}
+
+var cacheByAgentToken = sync.Map{}
 
 func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 	agentIP := clientIP(r)
@@ -18,7 +27,23 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: add cache with ttl
+	// check cache first
+	entry, found := cacheByAgentToken.Load(agentToken)
+	if found {
+		// expired?
+		cached := entry.(*cachedRules)
+		if int64(time.Since(cached.CachedAt).Seconds()) >= api.config.CacheTTL {
+			log.Debug("agent cache expired")
+			cacheByAgentToken.Delete(agentToken)
+		} else {
+			w.Header().Set("shieldwall-cache", "hit")
+			JSON(w, http.StatusOK, cached.Rules)
+			return
+		}
+	}
+
+	w.Header().Set("shieldwall-cache", "miss")
+
 	agent, err := database.FindAgentByToken(agentToken)
 	if err != nil {
 		log.Warning("[%s %s] error searching for token '%s': %v", agentIP, agentUA, agentToken, err)
@@ -30,7 +55,13 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Debug("[%s %s] successfully authenticated, returning %d rules", agentIP, agentUA, len(agent.Rules))
+	// save to cache
+	cacheByAgentToken.Store(agentToken, &cachedRules{
+		CachedAt: time.Now(),
+		Rules:    agent.Rules,
+	})
+
+	// log.Debug("[%s %s] successfully authenticated", agentIP, agentUA)
 
 	agent.UpdatedAt = time.Now()
 	agent.Address = agentIP

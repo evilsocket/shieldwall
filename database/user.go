@@ -18,16 +18,16 @@ const MinPasswordLength = 8
 
 // TODO: add 2FA
 type User struct {
-	ID           uint           `gorm:"primarykey"`
-	CreatedAt    time.Time      `gorm:"index"`
-	UpdatedAt    time.Time      `gorm:"index"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
-	Email        string         `gorm:"index"`
-	Verification string         `gorm:"index"`
-	Verified     bool           `gorm:"index"`
-	Hash         string
-	Address      string
-	Agents       []Agent
+	ID           uint           `gorm:"primarykey" json:"-""`
+	CreatedAt    time.Time      `gorm:"index" json:"created_at"`
+	UpdatedAt    time.Time      `gorm:"index" json:"updated_at"`
+	DeletedAt    gorm.DeletedAt `gorm:"index" json:"-"`
+	Email        string         `gorm:"index" json:"email"`
+	Verification string         `gorm:"index" json:"-"`
+	Verified     bool           `gorm:"index" json:"-"`
+	Hash         string         `json:"-"`
+	Address      string         `json:"address"`
+	Agents       []Agent        `json:"-"`
 }
 
 func makeRandomToken() string {
@@ -107,6 +107,23 @@ func LoginUser(address, email, password string) (*User, error) {
 	}
 
 	return &found, nil
+}
+
+func UpdateUser(user *User, ip string, newPassword string) (*User, error) {
+	if newPassword = str.Trim(newPassword); len(newPassword) < MinPasswordLength {
+		return nil, fmt.Errorf("minimum password length is %d", MinPasswordLength)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, fmt.Errorf("error generating password hash: %v", err)
+	}
+
+	user.UpdatedAt = time.Now()
+	user.Hash = string(hashedPassword)
+	user.Address = ip
+
+	return user, db.Save(user).Error
 }
 
 func FindUserByID(id int) (*User, error) {

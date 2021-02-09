@@ -64,6 +64,16 @@ func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// add the client ip by default if no rule has been provided
+		if len(req.Rules) == 0 {
+			req.Rules = []firewall.Rule{{
+				Type:     firewall.RuleAllow,
+				Address:  client,
+				Protocol: firewall.ProtoAll,
+				Ports:    []string{firewall.AllPorts},
+			}}
+		}
+
 		agent, err := database.RegisterAgent(user, req.Name, req.Rules)
 		if err != nil {
 			ERROR(w, http.StatusBadRequest, err)
@@ -143,8 +153,9 @@ func (api *API) UserUpdateAgent(w http.ResponseWriter, r *http.Request) {
 		for _, agent := range user.Agents {
 			if agent.ID == uint(idNum) {
 				if err = database.UpdateAgent(&agent, req.Name, req.Rules); err != nil {
-					ERROR(w, http.StatusInternalServerError, err)
+					ERROR(w, http.StatusBadRequest, err)
 				} else {
+					cacheByAgentToken.Delete(agent.Token)
 					JSON(w, http.StatusOK, agent)
 				}
 				return
@@ -174,6 +185,7 @@ func (api *API) UserDeleteAgent(w http.ResponseWriter, r *http.Request) {
 				if err = database.Delete(&agent); err != nil {
 					ERROR(w, http.StatusInternalServerError, err)
 				} else {
+					cacheByAgentToken.Delete(agent.Token)
 					JSON(w, http.StatusOK, "agent deleted")
 				}
 				return

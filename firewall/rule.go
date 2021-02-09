@@ -1,7 +1,7 @@
 package firewall
 
 const (
-	AllPorts = "1-65535"
+	AllPorts = "1:65535"
 )
 
 type Protocol string

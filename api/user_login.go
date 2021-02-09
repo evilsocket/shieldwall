@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/database"
 	"io"
@@ -34,7 +35,7 @@ func (api *API) UserLogin(w http.ResponseWriter, r *http.Request) {
 		ERROR(w, http.StatusUnauthorized, err)
 		return
 	} else if user == nil {
-		JSON(w, http.StatusUnauthorized, "invalid credentials")
+		ERROR(w, http.StatusUnauthorized, fmt.Errorf("invalid credentials")) // TODO: Change Errorf to errors
 		return
 	} else if token, err := api.tokenFor(user); err != nil {
 		log.Error("error creating token for user %d: %v", user.ID, err)
@@ -43,9 +44,13 @@ func (api *API) UserLogin(w http.ResponseWriter, r *http.Request) {
 	} else {
 		log.Debug("[%s] user %s logged in", client, user.Email)
 		JSON(w, http.StatusOK, struct {
-			Token string `json:"token"`
+			Token   string         `json:"token"`
+			User    *database.User `json:"data"`
+			Address string         `json:"address"`
 		}{
-			Token: token,
+			Token:   token,
+			User:    user,
+			Address: client,
 		})
 	}
 }

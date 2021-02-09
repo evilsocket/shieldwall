@@ -1,0 +1,133 @@
+<template>
+  <div class="agents-container container-fluid">
+
+    <a class="btn btn-sm btn-success"
+       style="margin-bottom: 10px"
+       :href="'/agents/new'">
+      new agent
+    </a>
+
+    <br/>
+
+    <div class="jumbotron" v-if="!agents.length">
+      No agents yet.
+    </div>
+
+    <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
+    <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
+
+    <table class="table table-sm table-striped table-hover" v-if="agents.length">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Created</th>
+        <th scope="col">Last Update</th>
+        <th scope="col">Name</th>
+        <th scope="col">Address</th>
+        <th scope="col">Info</th>
+        <th scope="col">Rules</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr v-for="agent in agents" :key="agent.name">
+        <td class="fit">{{ agent.created_at }}</td>
+        <td class="fit">{{ agent.updated_at }}</td>
+        <td>{{ agent.name }}</td>
+        <td class="fit">{{ agent.address }}</td>
+        <td class="fit">
+          <small>{{ agent.user_agent }}</small>
+        </td>
+        <td class="fit">
+          <span class="badge badge-info">{{ agent.rules.length }}</span>
+        </td>
+        <td class="fit">
+          <a class="btn btn-sm btn-light" :href="'/agent/' + agent.id">
+            v
+          </a>
+          &nbsp;
+          <a class="btn btn-sm btn-danger" href="#"
+             v-on:click="handleAgentDelete(agent)">
+            d
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</template>
+
+<script>
+import UserService from '../services/user.service';
+
+export default {
+  name: 'Agents',
+
+  data() {
+    return {
+      agents: [],
+      message: '',
+      error: '',
+    };
+  },
+
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
+  },
+
+  mounted() {
+    if (!this.currentUser) {
+      this.$router.push('/login');
+      return;
+    }
+
+    UserService.getUserAgents().then(
+        response => {
+          this.agents = response.data;
+        },
+        error => {
+          this.error =
+              (error.response && error.response.data && error.response.data.message) ||
+              error.message ||
+              error.toString();
+        }
+    );
+  },
+
+  methods: {
+    handleAgentDelete(agent) {
+        if (confirm("Are you sure you want to delete " + agent.name + ' ?')) {
+
+          UserService.deleteAgent(agent.id).then(
+              response => {
+                this.$router.go(this.$router.currentRoute);
+              },
+              error => {
+                this.error =
+                    (error.response && error.response.data && error.response.data.error) ||
+                    error.message ||
+                    error.toString();
+              }
+          );
+        }
+    }
+  }
+};
+</script>
+
+<style scoped>
+.agents-container {
+  padding: 20px 25px 30px;
+  margin: 0 auto 25px;
+  margin-top: 25px;
+}
+
+.table td.fit,
+.table th.fit {
+  white-space: nowrap;
+  width: 1%;
+}
+</style>

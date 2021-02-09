@@ -32,7 +32,7 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 
 	api.router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: false,
 		MaxAge:           300,
@@ -43,9 +43,12 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 			r.Get("/rules", api.GetRules)
 
 			r.Route("/user", func(r chi.Router) {
+
 				r.Post("/register", api.UserRegister)
 				r.Get("/verify/{verification:[A-Fa-f0-9]{64}}", api.UserVerify)
 				r.Post("/login", api.UserLogin)
+
+				r.Post("/", api.UserUpdate)
 
 				r.Route("/agents", func(r chi.Router) {
 					r.Put("/new", api.UserCreateAgent)

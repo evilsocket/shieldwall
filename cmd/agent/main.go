@@ -84,9 +84,10 @@ func main() {
 		} else {
 			state.Rules = rules
 
-			log.Debug("got rules baby %#v", state.Rules)
-
-			log.Info("applying %d rules", len(state.Rules))
+			if num := len(state.Rules); num > 0 {
+				log.Debug("got rules baby %#v", state.Rules)
+				log.Info("applying %d rules", num)
+			}
 
 			if len(conf.Allow) > 0 {
 				addAllowRules(state)

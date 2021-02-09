@@ -20,4 +20,4 @@ WORKDIR /root/
 COPY --from=builder /app/_build/shieldwall-api .
 
 EXPOSE 8666
-ENTRYPOINT ["./shieldwall-api", "-debug"]
+ENTRYPOINT ["./shieldwall-api"]

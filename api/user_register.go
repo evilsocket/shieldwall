@@ -32,7 +32,7 @@ func (api *API) UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	user, err := database.RegisterUser(client, req.Email, req.Password)
 	if err != nil {
-		log.Warning("[%s] %v", client, err)
+		log.Debug("[%s] %v", client, err)
 		ERROR(w, http.StatusBadRequest, err)
 		return
 	}
@@ -40,7 +40,7 @@ func (api *API) UserRegister(w http.ResponseWriter, r *http.Request) {
 	log.Info("[%s] registered new user %s", user.Address, user.Email)
 
 	// prepare and send verification email
-	link := fmt.Sprintf("%s/api/v1/user/verify/%s", api.config.URL, user.Verification)
+	link := fmt.Sprintf("%s/verify/%s", api.config.URL, user.Verification)
 
 	emailSubject := "shieldwall.me account verification"
 	emailBody := "Follow this link to complete your registration.<br/><br/>" +

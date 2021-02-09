@@ -1,0 +1,33 @@
+import axios from 'axios';
+import authHeader from './auth-header';
+import {API_AGENTS_URL, API_USER_UPDATE_URL, API_NEW_AGENT_URL} from "@/services/api";
+
+class UserService {
+  getUserAgents() {
+    return axios.get(API_AGENTS_URL, { headers: authHeader() });
+  }
+
+  update(new_password) {
+    return axios.post(API_USER_UPDATE_URL, {
+      password: new_password
+    }, { headers: authHeader() });
+  }
+
+  getAgent(id) {
+    return axios.get(API_AGENTS_URL + '/' + id, { headers: authHeader() });
+  }
+
+  deleteAgent(id) {
+    return axios.delete(API_AGENTS_URL + '/' + id, { headers: authHeader() });
+  }
+
+  createAgent(agent) {
+    return axios.put(API_NEW_AGENT_URL, agent, { headers: authHeader() });
+  }
+
+  updateAgent(agent) {
+    return axios.put(API_AGENTS_URL + '/' + agent.id, agent, { headers: authHeader() });
+  }
+}
+
+export default new UserService();
