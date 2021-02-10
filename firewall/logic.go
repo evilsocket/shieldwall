@@ -15,6 +15,7 @@ var lock = sync.Mutex{}
 func cmd(bin string, args ...string) (string, error) {
 	raw, err := exec.Command(bin, args...).CombinedOutput()
 	if err != nil {
+		log.Error("%s", str.Trim(string(raw)))
 		return "", err
 	} else {
 		return str.Trim(string(raw)), nil
@@ -45,12 +46,16 @@ func Apply(rules []Rule) (err error) {
 		return fmt.Errorf("error while resetting firewall: %v", err)
 	}
 
-	out, err := cmd(binary, "-A", "INPUT", "-m", "conntrack", "--ctstate", "RELATED,ESTABLISHED", "-j ACCEPT")
+	/*
+	Make this an option?
+
+	out, err := cmd(binary, "-A", "INPUT", "-m", "conntrack", "--ctstate", "RELATED,ESTABLISHED", "-j" , "ACCEPT")
 	if err != nil {
 		return fmt.Errorf("error running conntrack step: %v", err)
 	} else {
 		log.Debug("conntrack: %s", out)
 	}
+	*/
 
 	// for each rule
 	for _, rule := range rules {
