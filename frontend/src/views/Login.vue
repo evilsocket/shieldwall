@@ -57,7 +57,7 @@
 
     <center>
       Don't have an account? <br/>
-      <a href="/register">Sign up for free!</a>
+      <a href="/#/register">Sign up for free!</a>
     </center>
   </div>
 </template>

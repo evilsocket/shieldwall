@@ -62,7 +62,7 @@
 
     <center>
       Already have an account? <br/>
-      <a href="/login">Login in here!</a>
+      <a href="/#/login">Login in here!</a>
     </center>
   </div>
 </template>
