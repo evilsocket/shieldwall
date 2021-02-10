@@ -52,3 +52,6 @@ install_agent:
 	@systemctl daemon-reload
 	@systemctl enable shieldwall-agent
 	@service shieldwall-agent restart
+
+self_update:
+	clear && git checkout . && git pull && make clean && make api && sudo make install_api
