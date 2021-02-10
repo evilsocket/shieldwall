@@ -18,7 +18,7 @@ Run the agent with:
 
 ### Compile and Run your own API + Frontend
 
-Requires go and make, the API needs to be hosted on an IP that the agents can reach.
+Requires npm, go and make. The API needs to be hosted on an IP that the agents can reach.
 
     cp api.example.yaml api.yaml
     cp database.example.env database.env
