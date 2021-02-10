@@ -3,8 +3,8 @@
 
     <a class="btn btn-sm btn-success"
        style="margin-bottom: 10px"
-       :href="'/agents/new'"
-      v-if="agents.length"
+       :href="'/#/agents/new'"
+       v-if="agents.length"
     >
       new agent
     </a>
@@ -12,7 +12,7 @@
     <br/>
 
     <div class="jumbotron" v-if="!agents.length">
-      No agents yet, <a href="/agents/new">create the first one</a>!
+      No agents yet, <a href="/#/agents/new">create the first one</a>!
     </div>
 
     <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
@@ -40,7 +40,7 @@
           <timeago :datetime="agent.updated_at" :auto-update="60"></timeago>
         </td>
         <td>
-          <a :href="'/agent/' + agent.id">
+          <a :href="'/#/agent/' + agent.id">
             {{ agent.name }}
           </a>
         </td>

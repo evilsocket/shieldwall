@@ -26,10 +26,11 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 		router:   chi.NewRouter(),
 	}
 
+	// use response compression
 	compressor := middleware.NewCompressor(flate.DefaultCompression)
-
 	api.router.Use(compressor.Handler)
 
+	// set CORS rules
 	api.router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -38,6 +39,7 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 		MaxAge:           300,
 	}))
 
+	// API routes
 	api.router.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
 			r.Get("/rules", api.GetRules)
@@ -62,6 +64,9 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 			})
 		})
 	})
+
+	// frontend
+	api.router.Handle("/*", http.FileServer(MockFS()))
 
 	return api
 }

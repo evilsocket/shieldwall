@@ -215,7 +215,8 @@ export default {
               this.$router.push('/agents');
             } else {
               // force reload
-              window.location.href = '/agent/' + response.data.id;
+              window.location.href = '/#/agent/' + response.data.id;
+              window.location.reload();
             }
           },
           error => {

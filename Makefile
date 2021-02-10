@@ -3,7 +3,15 @@ all: agent api
 agent: _build
 	@go build -ldflags="-w -s" -o _build/shieldwall-agent cmd/agent/*.go
 
-api: _build
+bindata:
+	@go get -u github.com/go-bindata/go-bindata/...
+
+frontend: bindata
+	@rm -rf frontend/compiled.go
+	@cd frontend && npm run build
+	@go-bindata -o frontend/compiled.go -pkg frontend -prefix frontend/dist ./frontend/dist/...
+
+api: _build frontend
 	@go build -ldflags="-w -s" -o _build/shieldwall-api cmd/api/*.go
 
 test:
@@ -16,20 +24,20 @@ clean:
 	@rm -rf _build
 
 composer_build:
-	docker-compose build
+	@docker-compose build
 
 composer_up: composer_build
-	docker-compose up
+	@docker-compose up
 
 install_api:
-	service shieldwall-api stop
-	cp _build/shieldwall-api /usr/bin/
-	setcap 'cap_net_bind_service=+ep' /usr/bin/shieldwall-api
-	mkdir -p /etc/shieldwall/
-	test -s /etc/shieldwall/config.yaml || echo cp api.example.yaml /etc/shieldwall/config.yaml
-	cp shieldwall-api.service /etc/systemd/system/
-	systemctl daemon-reload
-	systemctl enable shieldwall-api
-	service shieldwall-api restart
+	@service shieldwall-api stop || true
+	@cp _build/shieldwall-api /usr/bin/
+	@setcap 'cap_net_bind_service=+ep' /usr/bin/shieldwall-api
+	@mkdir -p /etc/shieldwall/
+	@test -s /etc/shieldwall/config.yaml || echo cp api.example.yaml /etc/shieldwall/config.yaml
+	@cp shieldwall-api.service /etc/systemd/system/
+	@systemctl daemon-reload
+	@systemctl enable shieldwall-api
+	@service shieldwall-api restart
 
 

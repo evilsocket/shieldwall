@@ -5,7 +5,11 @@ go 1.15
 require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/evilsocket/islazy v1.10.6
+	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19 // indirect
+	github.com/gin-gonic/gin v1.6.3 // indirect
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-chi/chi v1.5.1
 	github.com/go-chi/cors v1.1.1
 	github.com/ilyakaznacheev/cleanenv v1.2.5 // indirect

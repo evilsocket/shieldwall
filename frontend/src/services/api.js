@@ -1,6 +1,6 @@
-export const API_HOST = 'localhost';
-export const API_PORT = 8666;
-export const API_BASE_URL = 'http://' + API_HOST + ':' + API_PORT + '/api/v1';
+export const API_HOST = 'shieldwall.me';
+export const API_PORT = 80;
+export const API_BASE_URL = '/api/v1';
 
 export const API_LOGIN_URL = API_BASE_URL + '/user/login';
 export const API_REGISTER_URL = API_BASE_URL + '/user/register';

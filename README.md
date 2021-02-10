@@ -16,7 +16,7 @@ Run the agent with:
 
     sudo ./_build/shieldwall-agent -config agent.yaml
 
-### Compile and Run your own API
+### Compile and Run your own API + Frontend
 
 Requires go and make, the API needs to be hosted on an IP that the agents can reach.
 
@@ -31,13 +31,3 @@ One the database is running you can compile and start the API service:
 
     make api
     ./_build/shieldwall-api -config api.yaml
-
-### Compile and Run the Frontend
-    
-Requires npm:
-
-    cd frontend
-    npm install
-    npm run serve
-
-TODO: production mode
