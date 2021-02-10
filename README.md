@@ -2,6 +2,10 @@ The shieldwall agent embraces the zero trust principle and instruments your serv
 connections from every IP on any port, by default. The website and API allow you to push policies
 to your agents and temporarily allow you to reach a certain port from your IP.
 
+**This project and its documentation are work in progress**
+
+https://shieldwall.me/
+
 ### Compile and Run the Agent
 
 Requires go and make, the agent runs on the server to protect.
