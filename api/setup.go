@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/cors"
 	"golang.org/x/crypto/acme/autocert"
 	"net/http"
+	"strings"
 )
 
 type API struct {
@@ -28,11 +29,14 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 	}
 
 	if config.SSL {
+		log.Info("ssl enabled for %s (caching on %s)", strings.Join(config.Domains, ", "), config.CertsCache)
 		api.certManager = &autocert.Manager{
-			Cache:      autocert.DirCache("/tmp/"),
+			Cache:      autocert.DirCache(config.CertsCache),
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(config.Domains...),
 		}
+	} else {
+		log.Warning("ssl disabled")
 	}
 
 	// use response compression
