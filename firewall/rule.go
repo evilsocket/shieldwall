@@ -17,7 +17,7 @@ const (
 type RuleType string
 
 const (
-	RuleBlock = RuleType("block") // TODO: implement block support
+	RuleBlock = RuleType("block")
 	RuleAllow = RuleType("allow")
 )
 

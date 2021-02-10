@@ -66,10 +66,12 @@ func Apply(rules []Rule) (err error) {
 			protos = []string{"tcp", "udp"}
 		}
 
-		// TODO: support blocking specific addresses and maybe tracking / logging
-
 		// for each protocol
 		for _, proto := range protos {
+			action := "ACCEPT"
+			if rule.Type == RuleBlock {
+				action = "DROP"
+			}
 			for _, port := range rule.Ports {
 				// for each port
 				out, err := cmd(binary,
@@ -77,7 +79,7 @@ func Apply(rules []Rule) (err error) {
 					"-s", rule.Address,
 					"-p", proto,
 					"--dport", port,
-					"-j", "ACCEPT")
+					"-j", action)
 				if err != nil {
 					return fmt.Errorf("error applying rule %s.%s.%s.%s: %v",
 						rule.Type,
