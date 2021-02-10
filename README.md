@@ -42,3 +42,9 @@ To install it as a systemd service:
 To run it manually:
 
     ./_build/shieldwall-api -config api.yaml
+
+### TODO
+
+* Agent rate limit (https://github.com/go-chi/httprate)
+* API 2FA ( https://www.thepolyglotdeveloper.com/2017/05/add-two-factor-authentication-golang-restful-api/ )
+* Max agents per user 
