@@ -46,16 +46,12 @@ func Apply(rules []Rule) (err error) {
 		return fmt.Errorf("error while resetting firewall: %v", err)
 	}
 
-	/*
-	Make this an option?
-
 	out, err := cmd(binary, "-A", "INPUT", "-m", "conntrack", "--ctstate", "RELATED,ESTABLISHED", "-j" , "ACCEPT")
 	if err != nil {
 		return fmt.Errorf("error running conntrack step: %v", err)
 	} else {
 		log.Debug("conntrack: %s", out)
 	}
-	*/
 
 	// for each rule
 	for _, rule := range rules {

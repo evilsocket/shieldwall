@@ -37,7 +37,7 @@ install_api:
 	@cp _build/shieldwall-api /usr/bin/
 	@setcap 'cap_net_bind_service=+ep' /usr/bin/shieldwall-api
 	@mkdir -p /etc/shieldwall/
-	@test -s /etc/shieldwall/config.yaml || echo cp api.example.yaml /etc/shieldwall/config.yaml
+	@test -s /etc/shieldwall/config.yaml || cp api.example.yaml /etc/shieldwall/config.yaml
 	@cp shieldwall-api.service /etc/systemd/system/
 	@systemctl daemon-reload
 	@systemctl enable shieldwall-api
@@ -47,7 +47,7 @@ install_agent:
 	@service shieldwall-agent stop || true
 	@cp _build/shieldwall-agent /usr/bin/
 	@mkdir -p /etc/shieldwall/
-	@test -s /etc/shieldwall/config.yaml || echo cp agent.example.yaml /etc/shieldwall/config.yaml
+	@test -s /etc/shieldwall/config.yaml || cp agent.example.yaml /etc/shieldwall/config.yaml
 	@cp shieldwall-agent.service /etc/systemd/system/
 	@systemctl daemon-reload
 	@systemctl enable shieldwall-agent
