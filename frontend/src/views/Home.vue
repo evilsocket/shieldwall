@@ -30,9 +30,9 @@
               </div>
               <div class="card-body">
                 <p class="card-text">Create a free account and use this server.</p>
-                <a href="/register" class="btn btn-primary" v-if="!currentUser">Sign Up</a>
+                <a href="/#/register" class="btn btn-primary" v-if="!currentUser">Sign Up</a>
                 &nbsp;
-                <a href="/docs" class="btn btn-info" >Quick Start</a>
+                <a href="/#/docs" class="btn btn-info" >Quick Start</a>
               </div>
 
             </div>
