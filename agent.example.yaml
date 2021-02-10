@@ -3,7 +3,7 @@ data: '/var/lib/shieldwall/'
 # path to iptables
 iptables: '/sbin/iptables'
 # api server to use
-server: 'https://api.shieldwall.me'
+server: 'https://shieldwall.me'
 # authentication token
 token: 'deadbeefdeadbeef'
 # api polling period in seconds

@@ -1,5 +1,5 @@
 [Unit]
-Description=shieldwall api service
+Description=shieldwall agent service
 Documentation=https://shieldwall.me/
 Wants=network.target
 After=network.target
@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 PermissionsStartOnly=true
-ExecStart=/usr/bin/shieldwall-api -log /var/log/shieldwall.log
+ExecStart=/usr/bin/shieldwall-agent -log /var/log/shieldwall.log
 Restart=always
 RestartSec=30
 

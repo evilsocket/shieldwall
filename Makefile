@@ -11,7 +11,10 @@ frontend: bindata
 	@cd frontend && npm run build
 	@go-bindata -o frontend/compiled.go -pkg frontend -prefix frontend/dist ./frontend/dist/...
 
-api: _build frontend
+api_and_frontend: _build frontend
+	@go build -ldflags="-w -s" -o _build/shieldwall-api cmd/api/*.go
+
+api: _build
 	@go build -ldflags="-w -s" -o _build/shieldwall-api cmd/api/*.go
 
 test:
@@ -40,4 +43,12 @@ install_api:
 	@systemctl enable shieldwall-api
 	@service shieldwall-api restart
 
-
+install_agent:
+	@service shieldwall-agent stop || true
+	@cp _build/shieldwall-agent /usr/bin/
+	@mkdir -p /etc/shieldwall/
+	@test -s /etc/shieldwall/config.yaml || echo cp agent.example.yaml /etc/shieldwall/config.yaml
+	@cp shieldwall-agent.service /etc/systemd/system/
+	@systemctl daemon-reload
+	@systemctl enable shieldwall-agent
+	@service shieldwall-agent restart
