@@ -16,7 +16,7 @@ type API struct {
 	mail        EmailConfig
 	sendmail    *mailer.Mailer
 	router      *chi.Mux
-	certManager autocert.Manager
+	certManager *autocert.Manager
 }
 
 func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
@@ -25,11 +25,14 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 		mail:     email,
 		sendmail: sendmail,
 		router:   chi.NewRouter(),
-		certManager: autocert.Manager{
+	}
+
+	if config.SSL {
+		api.certManager = &autocert.Manager{
 			Cache:      autocert.DirCache("/tmp/"),
 			Prompt:     autocert.AcceptTOS,
 			HostPolicy: autocert.HostWhitelist(config.Domains...),
-		},
+		}
 	}
 
 	// use response compression
@@ -80,11 +83,14 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 func (api *API) Run() {
 	log.Info("api starting on %s", api.config.Address)
 
-	server := &http.Server{
-		Addr:      api.config.Address,
-		TLSConfig: api.certManager.TLSConfig(),
-		Handler:   api.router,
+	if api.config.SSL {
+		server := &http.Server{
+			Addr:      api.config.Address,
+			TLSConfig: api.certManager.TLSConfig(),
+			Handler:   api.router,
+		}
+		log.Fatal("%v", server.ListenAndServeTLS("", ""))
+	} else {
+		log.Fatal("%v", http.ListenAndServe(api.config.Address, api.router))
 	}
-
-	log.Fatal("%v", server.ListenAndServeTLS("", ""))
 }

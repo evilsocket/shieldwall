@@ -9,6 +9,7 @@ type EmailConfig struct {
 
 type Config struct {
 	URL           string   `yaml:"url"`
+	SSL           bool     `yaml:"ssl"`
 	Domains       []string `yaml:"domains"`
 	Address       string   `yaml:"address"`
 	ReqMaxSize    int64    `yaml:"req_max_size"`
