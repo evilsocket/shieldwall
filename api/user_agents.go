@@ -49,6 +49,11 @@ type AgentCreationRequest struct {
 
 func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
 	if user := api.authorized(w, r); user != nil {
+		if api.config.MaxAgents > 0 && len(user.Agents) >= api.config.MaxAgents {
+			ERROR(w, http.StatusForbidden, fmt.Errorf("max %d agents per user reached", api.config.MaxAgents))
+			return
+		}
+
 		var req AgentCreationRequest
 
 		defer r.Body.Close()
