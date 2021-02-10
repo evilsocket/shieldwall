@@ -21,7 +21,7 @@ composer_build:
 composer_up: composer_build
 	docker-compose up
 
-install_api: api
+install_api:
 	service shieldwall-api stop
 	cp _build/shieldwall-api /usr/bin/
 	setcap 'cap_net_bind_service=+ep' /usr/bin/shieldwall-api
