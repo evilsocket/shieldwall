@@ -13,21 +13,21 @@ services:
     networks:
       - shieldwall
 
-  shieldwall_api:
-    container_name: shieldwall_api
-    image: shieldwall_api:latest
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    depends_on:
-      - database
-    ports:
-      - 8666:8666
-    volumes:
-      - ./api.yaml:/etc/shieldwall/config.yaml
-    restart: unless-stopped
-    networks:
-      - shieldwall
+#  shieldwall_api:
+#    container_name: shieldwall_api
+#    image: shieldwall_api:latest
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - database
+#    ports:
+#      - 8666:8666
+#    volumes:
+#      - ./api.yaml:/etc/shieldwall/config.yaml
+#    restart: unless-stopped
+#    networks:
+#      - shieldwall
 
 volumes:
   db:
@@ -35,4 +35,4 @@ volumes:
 
 networks:
   shieldwall:
-    driver: bridge      
+    driver: bridge
