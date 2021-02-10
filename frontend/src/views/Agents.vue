@@ -3,14 +3,16 @@
 
     <a class="btn btn-sm btn-success"
        style="margin-bottom: 10px"
-       :href="'/agents/new'">
+       :href="'/agents/new'"
+      v-if="agents.length"
+    >
       new agent
     </a>
 
     <br/>
 
     <div class="jumbotron" v-if="!agents.length">
-      No agents yet.
+      No agents yet, <a href="/agents/new">create the first one</a>!
     </div>
 
     <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>

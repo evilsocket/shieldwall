@@ -1,0 +1,15 @@
+# where to store the lists
+data: '/var/lib/shieldwall/'
+# path to iptables
+iptables: '/sbin/iptables'
+# api server to use
+server: 'https://api.shieldwall.me'
+# authentication token
+token: 'deadbeefdeadbeef'
+# api polling period in seconds
+period: 10
+# api timeout in seconds or 0 for no timeout
+timeout: 0
+# list of ip addresses to always allow just in case
+allow:
+  - '127.0.0.1'

@@ -15,6 +15,11 @@ type UserRegisterRequest struct {
 }
 
 func (api *API) UserRegister(w http.ResponseWriter, r *http.Request) {
+	if api.config.AllowNewUsers == false {
+		ERROR(w, http.StatusLocked, fmt.Errorf("apologies, registrations are closed at the moment"))
+		return
+	}
+
 	var req UserRegisterRequest
 
 	defer r.Body.Close()

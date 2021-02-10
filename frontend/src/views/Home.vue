@@ -1,24 +1,59 @@
 <template>
   <div class="home-container container-fluid">
     <div class="jumbotron">
-      <h1 class="display-4">
-        <img src="/logo.png" width="50px"/>
-        shieldwall!
-      </h1>
-      <br/>
-      <p class="lead">
-        Shieldwall is a free service that helps you secure your most private servers.
-      </p>
-      <hr class="my-4">
-      <p>Every agent connects to our API
-        and fetch a list of the IP addresses you allowed to navigate the host and block the inbound traffic from
-        every other source.</p>
-      <p class="lead" v-if="!currentUser">
+      <div style="text-align: center;">
+        <h1 class="display-4">
+          <img src="/logo.png" width="50px"/>
+          shieldwall
+        </h1>
         <br/>
-        <a class="btn btn-primary btn" href="/register" role="button">
-          Create a Free Account
-        </a>
+
+        <p class="lead">
+          Helps you secure your most private servers!
+        </p>
+      </div>
+
+      <hr class="my-4">
+
+      <p style="text-align: center;">
+        The shieldwall agent will instrument your server firewall and block inbound connections from every IP, only
+        allowing the addresses and ports you configured via the backend.
       </p>
+
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="card text-center">
+              <div class="card-header">
+                Free API
+              </div>
+              <div class="card-body">
+                <p class="card-text">Create here an account for free and use this server to instrument your agents.</p>
+                <a href="/register" class="btn btn-primary" v-if="!currentUser">Sign Up</a>
+                &nbsp;
+                <a href="/docs" class="btn btn-info" >Quick Start</a>
+              </div>
+
+            </div>
+          </div>
+          <div class="col">
+            <div class="card text-center">
+              <div class="card-header">
+                Host it Yourself
+              </div>
+              <div class="card-body">
+                <p class="card-text">Host the backend and API service yourself and configure
+                  the agents to communicate in a more discreet setup.</p>
+                <a href="https://github.com/evilsocket/shieldwall" target="_blank" class="btn btn-success">
+                  Code Repository
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>

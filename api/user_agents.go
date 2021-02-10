@@ -64,16 +64,6 @@ func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// add the client ip by default if no rule has been provided
-		if len(req.Rules) == 0 {
-			req.Rules = []firewall.Rule{{
-				Type:     firewall.RuleAllow,
-				Address:  client,
-				Protocol: firewall.ProtoAll,
-				Ports:    []string{firewall.AllPorts},
-			}}
-		}
-
 		agent, err := database.RegisterAgent(user, req.Name, req.Rules)
 		if err != nil {
 			ERROR(w, http.StatusBadRequest, err)

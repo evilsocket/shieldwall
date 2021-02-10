@@ -20,7 +20,7 @@ func (j *JSONB) Scan(value interface{}) error {
 	return nil
 }
 
-func toJSONB(v interface{}) datatypes.JSON {
+func ToJSONB(v interface{}) datatypes.JSON {
 	data, _ := json.Marshal(v)
 	return datatypes.JSON(data)
 }

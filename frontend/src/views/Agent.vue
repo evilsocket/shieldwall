@@ -1,7 +1,7 @@
 <template>
   <div class="agent-container container-fluid">
 
-    <h2>{{ editing ? 'Edit' : 'Create' }} Agent</h2>
+    <h2>{{ editing ? 'Edit' : 'New' }} Agent</h2>
 
     <br/>
 
@@ -62,6 +62,7 @@
             <th scope="col">Address</th>
             <th scope="col">Proto</th>
             <th scope="col">Ports</th>
+            <th scope="col">Expires</th>
             <th scope="col"></th>
           </tr>
           </thead>
@@ -98,6 +99,20 @@
                   class="form-control"
                   name="ports"
               />
+            </td>
+
+            <td class="fit">
+              <select class="form-control" v-model.number="rule.ttl" type="number">
+                <option :selected="rule.ttl == 0" value=0>Never</option>
+                <option :selected="rule.ttl == 3" value=3>3 Seconds</option>
+                <option :selected="rule.ttl == 300" value=300>5 Minutes</option>
+                <option :selected="rule.ttl == 600" value=600>10 Minutes</option>
+                <option :selected="rule.ttl == 900" value=900>15 Minutes</option>
+                <option :selected="rule.ttl == 1800" value=1800>30 Minutes</option>
+                <option :selected="rule.ttl == 3600" value=3600>1 Hour</option>
+                <option :selected="rule.ttl == 43200" value=43200>12 Hours</option>
+                <option :selected="rule.ttl == 86400" value=86400>24 Hours</option>
+              </select>
             </td>
 
             <td class="fit">
@@ -142,7 +157,8 @@ export default {
           "allow",
           this.$store.state.auth.user.address,
           "all",
-          ["1:65535"]
+          ["1:65535"],
+          0
       )]),
       loading: false,
       submitted: false,
@@ -164,7 +180,7 @@ export default {
       return;
     }
 
-    if(this.$route.params.id) {
+    if (this.$route.params.id) {
       this.editing = true;
       UserService.getAgent(this.$route.params.id).then(
           response => {
@@ -194,8 +210,13 @@ export default {
       let method = this.editing ? UserService.updateAgent : UserService.createAgent;
 
       method(this.agent).then(
-          () => {
-            this.$router.push('/agents');
+          response => {
+            if (this.editing) {
+              this.$router.push('/agents');
+            } else {
+              // force reload
+              window.location.href = '/agent/' + response.data.id;
+            }
           },
           error => {
             this.error =
@@ -215,7 +236,8 @@ export default {
           "allow",
           this.$store.state.auth.user.address,
           "all",
-          ["443", "80"]
+          ["443", "80", "22"],
+          43200
       ));
     }
   }

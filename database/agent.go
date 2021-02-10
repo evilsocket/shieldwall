@@ -58,6 +58,10 @@ func validateAgentData(name string, rules []firewall.Rule) error {
 			return fmt.Errorf("%s is not a valid address", rule.Address)
 		}
 
+		if rule.TTL < 0 {
+			return fmt.Errorf("really? %d", rule.TTL)
+		}
+
 		for _, port := range rule.Ports {
 			if strings.Index(port, ":") != -1 {
 				// parse as range
@@ -99,11 +103,15 @@ func RegisterAgent(user *User, name string, rules []firewall.Rule) (*Agent, erro
 		return nil, fmt.Errorf("agent name already used")
 	}
 
+	for i := range rules {
+		rules[i].CreatedAt = time.Now()
+	}
+
 	newAgent := Agent{
 		UserID: user.ID,
 		Name:   name,
 		Token:  makeRandomToken(),
-		Rules:  toJSONB(rules),
+		Rules:  ToJSONB(rules),
 	}
 
 	if err = db.Create(&newAgent).Error; err != nil {
@@ -124,8 +132,14 @@ func UpdateAgent(agent *Agent, name string, rules []firewall.Rule) error {
 		return fmt.Errorf("agent name already used")
 	}
 
+	for i, rule := range rules {
+		if rule.TTL > 0 && rule.CreatedAt.IsZero() {
+			rules[i].CreatedAt = time.Now()
+		}
+	}
+
 	agent.Name = name
-	agent.Rules = toJSONB(rules)
+	agent.Rules = ToJSONB(rules)
 	agent.UpdatedAt = time.Now()
 
 	return db.Save(agent).Error
