@@ -49,3 +49,4 @@ To run it manually:
 * Upload rules json to bucket?
 * Agent self update?
 * deb, rpm, etc for the agent
+* Agent config file download / curl https://shieldwall.me/anget-install-12345 | sh ?

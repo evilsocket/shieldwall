@@ -79,4 +79,12 @@ export default {
   margin: 0 auto 25px;
   margin-top: 25px;
 }
+
+.btn {
+  margin-top: 5px;
+}
+
+.card {
+  margin-top: 10px;
+}
 </style>
