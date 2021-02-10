@@ -9,6 +9,22 @@
 
     <script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit" async defer></script>
     <script async defer data-domain="shieldwall.me" src="https://plausible.io/js/plausible.js"></script>
+
+    <style>
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            font-size: 0.9rem;
+            color: #bbb;
+            padding: 5px;
+        }
+
+        .footer > a {
+            color: #bbb;
+        }
+    </style>
 </head>
 <body>
 <noscript>
@@ -16,6 +32,10 @@
         continue.</strong>
 </noscript>
 <div id="app"></div>
+
+<footer class="footer" style="text-align: center">
+    shieldwall was made with ♥ by <a href="http://github.com/evilsocket" target="_blank">evilsocket</a> and it's released under the GPL 3 license.
+</footer>
 
 </body>
 </html>
