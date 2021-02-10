@@ -2,20 +2,21 @@ package api
 
 import (
 	"compress/flate"
-	"github.com/evilsocket/shieldwall/mailer"
-	"net/http"
-
 	"github.com/evilsocket/islazy/log"
+	"github.com/evilsocket/shieldwall/mailer"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"golang.org/x/crypto/acme/autocert"
+	"net/http"
 )
 
 type API struct {
-	config   Config
-	mail     EmailConfig
-	sendmail *mailer.Mailer
-	router   *chi.Mux
+	config      Config
+	mail        EmailConfig
+	sendmail    *mailer.Mailer
+	router      *chi.Mux
+	certManager autocert.Manager
 }
 
 func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
@@ -24,6 +25,11 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 		mail:     email,
 		sendmail: sendmail,
 		router:   chi.NewRouter(),
+		certManager: autocert.Manager{
+			Cache:      autocert.DirCache("/tmp/"),
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(config.Domains...),
+		},
 	}
 
 	// use response compression
@@ -73,5 +79,12 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 
 func (api *API) Run() {
 	log.Info("api starting on %s", api.config.Address)
-	log.Fatal("%v", http.ListenAndServe(api.config.Address, api.router))
+
+	server := &http.Server{
+		Addr:      api.config.Address,
+		TLSConfig: api.certManager.TLSConfig(),
+		Handler:   api.router,
+	}
+
+	log.Fatal("%v", server.ListenAndServeTLS("", ""))
 }
