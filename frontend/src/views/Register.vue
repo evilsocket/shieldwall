@@ -6,7 +6,7 @@
           src="/logo.png"
           class="profile-img-card"
       />
-      <form name="form" @submit.prevent="handleRegister">
+      <form name="form">
         <div v-if="!successful">
           <div class="form-group">
             <label for="email">Email</label>
@@ -38,8 +38,6 @@
             >{{ errors.first('password') }}
             </div>
           </div>
-
-
 
           <div class="form-group">
             <vue-recaptcha

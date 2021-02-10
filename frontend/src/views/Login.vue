@@ -6,7 +6,7 @@
           src="/logo.png"
           class="profile-img-card"
       />
-      <form name="form" @submit.prevent="handleLogin">
+      <form name="form">
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -38,10 +38,16 @@
           </div>
         </div>
         <div class="form-group">
-          <button class="btn btn-primary btn-block" :disabled="loading">
-            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-            <span>Login</span>
-          </button>
+          <vue-recaptcha
+              ref="recaptcha"
+              @verify="onCaptchaVerified"
+              @expired="onCaptchaExpired"
+              sitekey="6LewaVIaAAAAAFn37I4KpU4OOKcjJBh_D0GXB8gC">
+            <button class="btn btn-primary btn-block" :disabled="loading">
+              <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+              <span>Login</span>
+            </button>
+          </vue-recaptcha>
         </div>
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">{{ message }}</div>
@@ -58,9 +64,12 @@
 
 <script>
 import User from '../models/user';
+import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   name: 'Login',
+  components: { VueRecaptcha },
+
   data() {
     return {
       user: new User('', ''),
@@ -102,6 +111,14 @@ export default {
           );
         }
       });
+    },
+
+    onCaptchaExpired: function () {
+      this.$refs.recaptcha.reset();
+    },
+
+    onCaptchaVerified: function () {
+      this.handleLogin();
     }
   }
 };
