@@ -1,0 +1,15 @@
+[Unit]
+Description=shieldwall api service
+Documentation=https://github.com/evilsocket/shieldwall
+Wants=network.target
+After=network.target
+
+[Service]
+Type=simple
+PermissionsStartOnly=true
+ExecStart=/usr/bin/shieldwall-api -log /var/log/shieldwall.log
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
