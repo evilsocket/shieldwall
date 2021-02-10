@@ -72,7 +72,7 @@ func Apply(rules []Rule) (err error) {
 		for _, proto := range protos {
 			for _, port := range rule.Ports {
 				// for each port
-				out, err = cmd(binary,
+				out, err := cmd(binary,
 					"-A", "INPUT",
 					"-s", rule.Address,
 					"-p", proto,
@@ -98,7 +98,7 @@ func Apply(rules []Rule) (err error) {
 	}
 
 	// drop the rest
-	if out, err = cmd(binary, "-A", "INPUT", "-j", "DROP"); err != nil {
+	if out, err := cmd(binary, "-A", "INPUT", "-j", "DROP"); err != nil {
 		return fmt.Errorf("error running drop rule: %v", err)
 	} else {
 		log.Debug("drop: %s", out)
