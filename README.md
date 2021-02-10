@@ -45,6 +45,7 @@ To run it manually:
 
 ### TODO
 
-* Agent rate limit (https://github.com/go-chi/httprate)
-* API 2FA ( https://www.thepolyglotdeveloper.com/2017/05/add-two-factor-authentication-golang-restful-api/ )
-* Max agents per user 
+* 2FA
+* Upload rules json to bucket?
+* Agent self update?
+* deb, rpm, etc for the agent

@@ -60,7 +60,7 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 	if found {
 		// expired?
 		cached := entry.(*cachedRules)
-		if int64(time.Since(cached.CachedAt).Seconds()) >= api.config.CacheTTL {
+		if int(time.Since(cached.CachedAt).Seconds()) >= api.config.CacheTTL {
 			log.Debug("agent cache expired")
 			cacheByAgentToken.Delete(agentToken)
 		} else {
