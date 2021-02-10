@@ -7,9 +7,11 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 	"golang.org/x/crypto/acme/autocert"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type API struct {
@@ -58,6 +60,7 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 			r.Get("/rules", api.GetRules)
 
 			r.Route("/user", func(r chi.Router) {
+				r.Use(httprate.LimitByIP(2, 1*time.Second))
 
 				r.Post("/register", api.UserRegister)
 				r.Get("/verify/{verification:[A-Fa-f0-9]{64}}", api.UserVerify)
