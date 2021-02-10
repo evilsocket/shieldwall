@@ -48,6 +48,7 @@
               <button class="btn btn-primary btn-block">Sign Up</button>
             </vue-recaptcha>
           </div>
+
         </div>
       </form>
 

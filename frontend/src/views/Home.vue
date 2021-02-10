@@ -5,6 +5,7 @@
         <h1 class="display-4">
           <img src="/logo.png" width="50px"/>
           shieldwall
+          <small class="beta">beta</small>
         </h1>
         <br/>
 
@@ -78,6 +79,11 @@ export default {
   padding: 20px 25px 30px;
   margin: 0 auto 25px;
   margin-top: 25px;
+}
+
+.beta {
+  font-size: 15px;
+  margin-left: -10px;
 }
 
 .btn {

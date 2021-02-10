@@ -27,9 +27,6 @@
       <span v-if="editing">
         <div class="form-group">
           <label for="token"><strong>Token</strong></label>
-          <small style="margin-left: 10px">
-            Use this token in the configuration file of the agent.
-          </small>
           <input
               v-model="agent.token"
               type="text"
@@ -38,6 +35,34 @@
               id="token"
               readonly="true"
           />
+          <div
+              v-if="submitted && errors.has('token')"
+              class="alert-danger"
+          >{{ errors.first('token') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="token"><strong>agent.yaml</strong></label>
+          <small style="margin-left: 10px">
+            Use this as the agent configuration file.
+          </small>
+          <pre class="config-file form-control">
+# where to store the lists
+data: '/var/lib/shieldwall/'
+# path to iptables
+iptables: '/sbin/iptables'
+# api server to use
+server: 'https://shieldwall.me'
+# authentication token
+token: '{{ agent.token }}'
+# api polling period in seconds
+period: 10
+# api timeout in seconds or 0 for no timeout
+timeout: 120
+# list of ip addresses to always allow just in case
+allow:
+  - '127.0.0.1'</pre>
           <div
               v-if="submitted && errors.has('token')"
               class="alert-danger"
@@ -248,8 +273,13 @@ export default {
 <style scoped>
 .agent-container {
   padding: 20px 25px 30px;
-  margin: 0 auto 25px;
-  margin-top: 25px;
+  margin: 25px auto;
 }
 
+.config-file {
+  font-family: monospace;
+  height: fit-content;
+  background-color: #212529;
+  color: white;
+}
 </style>
