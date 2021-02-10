@@ -46,7 +46,7 @@
                 ref="recaptcha"
                 @verify="onCaptchaVerified"
                 @expired="onCaptchaExpired"
-                sitekey="6LfJA0gUAAAAAA4YDXBubWMll55x5xLpyzu6n60G">
+                sitekey="6LewaVIaAAAAAFn37I4KpU4OOKcjJBh_D0GXB8gC">
               <button class="btn btn-primary btn-block">Sign Up</button>
             </vue-recaptcha>
           </div>
