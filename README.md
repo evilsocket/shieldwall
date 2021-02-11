@@ -26,7 +26,8 @@ file, making sure it matches what you see on the agent page.
 **It is very important that you double check the configuration before the next step, if the agent can't authenticate 
 because of a wrong token, you will be locked out by the firewall and unable to log back.** 
 
-You can now enable the service and start it. If configured so, it will automatically download its updates from github:
+You can now enable the service and start it. If configured so, it will automatically download and install its updates 
+from github:
 
     sudo systemctl enable shieldwall-agent
     sudo service shieldwall-agent start    
