@@ -6,7 +6,8 @@
           src="/logo.png"
           class="profile-img-card"
       />
-      <form name="form">
+
+      <form name="form" @submit.prevent="handleFormSubmit">
         <div class="form-group">
           <label for="email">Email</label>
           <input
@@ -40,6 +41,7 @@
         <div class="form-group">
           <vue-recaptcha
               ref="recaptcha"
+              v-if="!dev"
               @verify="onCaptchaVerified"
               @expired="onCaptchaExpired"
               sitekey="6LewaVIaAAAAAFn37I4KpU4OOKcjJBh_D0GXB8gC">
@@ -48,6 +50,10 @@
               <span>Login</span>
             </button>
           </vue-recaptcha>
+          <button class="btn btn-primary btn-block" :disabled="loading" v-if="dev">
+            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+            <span>Login</span>
+          </button>
         </div>
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">{{ message }}</div>
@@ -65,6 +71,7 @@
 <script>
 import User from '../models/user';
 import VueRecaptcha from 'vue-recaptcha';
+import {API_DEV} from '../services/api';
 
 export default {
   name: 'Login',
@@ -74,7 +81,8 @@ export default {
     return {
       user: new User('', ''),
       loading: false,
-      message: ''
+      message: '',
+      dev: API_DEV
     };
   },
   computed: {
@@ -88,6 +96,12 @@ export default {
     }
   },
   methods: {
+    handleFormSubmit() {
+      if(this.dev === true) {
+        this.handleLogin();
+      }
+    },
+
     handleLogin() {
       this.loading = true;
       this.$validator.validateAll().then(isValid => {
