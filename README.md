@@ -8,7 +8,7 @@
 
 ShieldWall embraces the zero-trust principle and instruments your server firewall to block inbound connections from every IP on any port, by default. The website allows you to push policies to your agents and temporarily unlock certain ports from your IP.
 
-### Installing the agent
+### Quick Start
 
 Download the [latest precompiled release](https://github.com/evilsocket/shieldwall/releases/latest) and install it 
 with (adjust url to the latest version and your server architecture).
