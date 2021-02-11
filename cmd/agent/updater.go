@@ -85,11 +85,12 @@ func Untar(dst string, r io.Reader) error {
 	}
 }
 
-var repo = "evilsocket/shieldwall"
-var extractTo = "/tmp/shieldwall/"
-var installer = filepath.Join(extractTo, "install.sh")
-
-var versionParser = regexp.MustCompile("^https://github\\.com/" + repo + "/releases/tag/v([\\d\\.a-z]+)$")
+var (
+	repo = "evilsocket/shieldwall"
+	extractTo = "/tmp/shieldwall/"
+	installer = filepath.Join(extractTo, "update.sh")
+	versionParser = regexp.MustCompile("^https://github\\.com/" + repo + "/releases/tag/v([\\d\\.a-z]+)$")
+)
 
 func updater() {
 	log.Info("update checker started with a %s period", updateCheckPeriod)

@@ -28,8 +28,7 @@ archives:
     files:
       - LICENSE.md
       - shieldwall-agent.service
-      - agent.example.yaml
-      - install.sh
+      - update.sh
 
 checksum:
   name_template: 'checksums.txt'
