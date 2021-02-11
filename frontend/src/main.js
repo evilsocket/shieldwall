@@ -8,10 +8,10 @@ import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-import {faDesktop, faHome, faSignInAlt, faSignOutAlt, faUser, faUserPlus} from '@fortawesome/free-solid-svg-icons';
+import {faDesktop, faHome, faSignInAlt, faSignOutAlt, faTerminal, faArchive, faUser, faUserPlus} from '@fortawesome/free-solid-svg-icons';
 import VueTimeago from 'vue-timeago'
 
-library.add(faHome, faUser, faDesktop, faUserPlus, faSignInAlt, faSignOutAlt);
+library.add(faHome, faUser, faDesktop, faUserPlus, faTerminal, faArchive, faSignInAlt, faSignOutAlt);
 
 Vue.config.productionTip = false;
 

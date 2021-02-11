@@ -5,19 +5,21 @@
 
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
-          <router-link to="/docs" class="nav-link">Docs</router-link>
+          <router-link to="/docs" class="nav-link">
+            <font-awesome-icon icon="archive" /> <span class="d-none d-sm-inline-block">Docs</span>
+          </router-link>
         </li>
       </div>
 
       <div v-if="!currentUser && !loggedIn" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/register" class="nav-link">
-            <font-awesome-icon icon="user" /> Sign Up
+            <font-awesome-icon icon="user" /> <span class="d-none d-sm-inline-block">Sign Up</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/login" class="nav-link">
-            <font-awesome-icon icon="sign-in-alt" /> Login
+            <font-awesome-icon icon="sign-in-alt" /> <span class="d-none d-sm-inline-block">Login</span>
           </router-link>
         </li>
       </div>
@@ -25,19 +27,17 @@
       <div v-if="loggedIn && currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/agents" class="nav-link">
-            <font-awesome-icon icon="desktop" />
-            Agents
+            <font-awesome-icon icon="terminal" /> <span class="d-none d-sm-inline-block">Agents</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/profile" class="nav-link">
-            <font-awesome-icon icon="user" />
-            Profile
+            <font-awesome-icon icon="user" /> <span class="d-none d-sm-inline-block">Profile</span>
           </router-link>
         </li>
         <li class="nav-item">
           <a class="nav-link" href @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt" />Logout
+            <font-awesome-icon icon="sign-out-alt" /> <span class="d-none d-sm-inline-block">Logout</span>
           </a>
         </li>
       </div>
@@ -45,7 +45,7 @@
       <div v-if="currentUser && !loggedIn" class="navbar-nav ml-auto">
         <li class="nav-item">
           <a class="nav-link" href @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt" />Logout
+            <font-awesome-icon icon="sign-out-alt" /> <span class="d-none d-sm-inline-block">Logout</span>
           </a>
         </li>
       </div>

@@ -71,11 +71,11 @@ allow:
         </div>
       </span>
 
-      <div class="form-group">
+      <div class="form-group table-responsive">
         <h3>Rules
           <a class="btn btn-sm btn-success"
              href="#"
-             v-on:click="handleRuleAdd()">
+             v-on:click.prevent="handleRuleAdd()">
             +
           </a>
         </h3>

@@ -1,5 +1,5 @@
 <template>
-  <div class="agents-container container-fluid">
+  <div class="agents-container container-fluid table-responsive">
 
     <a class="btn btn-sm btn-success"
        style="margin-bottom: 10px"
@@ -117,7 +117,12 @@ export default {
 
         UserService.deleteAgent(agent.id).then(
             () => {
-              this.$router.go(this.$router.currentRoute);
+              for( var i in this.agents ) {
+                if(this.agents[i].id === agent.id) {
+                  this.agents.splice(i, 1);
+                  break;
+                }
+              }
             },
             error => {
               this.error =
