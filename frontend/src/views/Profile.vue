@@ -48,10 +48,17 @@
         </div>
       </div>
 
+      <div class="form-group form-check">
+        <input class="form-check-input" type="checkbox" value="1" id="use_2fa" v-model="use_2fa">
+        <label class="form-check-label" for="use_2fa">
+          Two-step verification via email
+        </label>
+      </div>
+
       <div class="form-group">
         <button class="btn btn-primary btn-block" :disabled="loading">
           <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-          <span>Change Password</span>
+          <span>Save</span>
         </button>
       </div>
       <div class="form-group">
@@ -75,6 +82,7 @@ export default {
       loading: false,
       message: '',
       error: '',
+      use_2fa: this.$store.state.auth.user.data.use_2fa,
       new_password: ''
     };
   },
@@ -86,7 +94,7 @@ export default {
   },
 
   mounted() {
-    if (!this.currentUser) {
+    if (!this.$store.state.auth.status.loggedIn) {
       this.$router.push('/login');
     }
   },
@@ -100,11 +108,12 @@ export default {
           return;
         }
 
-        if (this.new_password.length >= 8) {
-          UserService.update(this.new_password).then(
-              () => {
+        if (this.new_password.length >= 8 || this.use_2fa !== this.currentUser.data.use_2fa) {
+          UserService.update(this.new_password, this.use_2fa).then(
+              response => {
                 this.loading = false;
-                this.message = 'Password updated.';
+                this.message = 'Profile updated.';
+                localStorage.setItem('user', JSON.stringify(response.data));
               },
               error => {
                 this.loading = false;

@@ -35,6 +35,12 @@ export const router = new Router({
       params: true
     },
     {
+      path: '/2step',
+      name: '2step',
+      // lazy-loaded
+      component: () => import('./views/2Step.vue')
+    },
+    {
       path: '/profile',
       name: 'profile',
       // lazy-loaded

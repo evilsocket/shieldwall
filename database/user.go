@@ -1,6 +1,7 @@
 package database
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -9,14 +10,12 @@ import (
 	"github.com/evilsocket/islazy/str"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"math/rand"
 	"strconv"
 	"time"
 )
 
 const MinPasswordLength = 8
 
-// TODO: add 2FA
 type User struct {
 	ID           uint           `gorm:"primarykey" json:"-""`
 	CreatedAt    time.Time      `gorm:"index" json:"created_at"`
@@ -25,6 +24,7 @@ type User struct {
 	Email        string         `gorm:"index" json:"email"`
 	Verification string         `gorm:"index" json:"-"`
 	Verified     bool           `gorm:"index" json:"-"`
+	Use2FA       bool           `gorm:"default:true" json:"use_2fa"` // i know it's not 2fa yet
 	Hash         string         `json:"-"`
 	Address      string         `json:"address"`
 	Agents       []Agent        `json:"-"`
@@ -100,6 +100,10 @@ func LoginUser(address, email, password string) (*User, error) {
 		return nil, nil
 	}
 
+	if found.Use2FA {
+		found.Verification = makeRandomToken()
+	}
+
 	found.Address = address
 	found.UpdatedAt = time.Now()
 	if err := db.Save(&found).Error; err != nil {
@@ -109,18 +113,21 @@ func LoginUser(address, email, password string) (*User, error) {
 	return &found, nil
 }
 
-func UpdateUser(user *User, ip string, newPassword string) (*User, error) {
-	if newPassword = str.Trim(newPassword); len(newPassword) < MinPasswordLength {
+func UpdateUser(user *User, ip string, newPassword string, use2FA bool) (*User, error) {
+	if newPassword = str.Trim(newPassword); newPassword != "" && len(newPassword) < MinPasswordLength {
 		return nil, fmt.Errorf("minimum password length is %d", MinPasswordLength)
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, fmt.Errorf("error generating password hash: %v", err)
+	if newPassword != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, fmt.Errorf("error generating password hash: %v", err)
+		}
+		user.Hash = string(hashedPassword)
 	}
 
+	user.Use2FA = use2FA
 	user.UpdatedAt = time.Now()
-	user.Hash = string(hashedPassword)
 	user.Address = ip
 
 	return user, db.Save(user).Error

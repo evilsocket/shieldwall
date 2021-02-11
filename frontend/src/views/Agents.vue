@@ -34,22 +34,31 @@
       <tbody>
       <tr v-for="agent in agents" :key="agent.name">
         <td class="fit">
-          <timeago :datetime="agent.created_at" :auto-update="60"></timeago>
+          <small>
+            <timeago :datetime="agent.created_at" :auto-update="60"></timeago>
+          </small>
         </td>
         <td class="fit">
-          <timeago :datetime="agent.updated_at" :auto-update="60"></timeago>
+          <small>
+            <timeago :datetime="agent.updated_at" :auto-update="60"></timeago>
+          </small>
         </td>
         <td>
           <a :href="'/#/agent/' + agent.id">
             {{ agent.name }}
           </a>
         </td>
-        <td class="fit">{{ agent.address }}</td>
         <td class="fit">
-          <small>{{ agent.user_agent }}</small>
+          {{ agent.address }}
+          <small v-if="!agent.address" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">
-          <span class="badge badge-info">{{ agent.rules.length }}</span>
+          {{ agent.user_agent }}
+          <small v-if="!agent.user_agent" class="text-muted">not seen yet</small>
+        </td>
+        <td class="fit">
+          <span v-if="agent.rules.length" class="badge badge-info">{{ agent.rules.length }}</span>
+          <small v-if="!agent.rules.length" class="text-muted">none</small>
         </td>
         <td class="fit">
           <a class="btn btn-sm btn-danger" href="#" v-on:click="handleAgentDelete(agent)">
@@ -84,7 +93,7 @@ export default {
   },
 
   mounted() {
-    if (!this.currentUser) {
+    if (!this.$store.state.auth.status.loggedIn) {
       this.$router.push('/login');
       return;
     }

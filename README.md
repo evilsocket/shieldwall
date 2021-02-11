@@ -49,7 +49,6 @@ To run it manually:
 
 ### TODO
 
-* 2FA
 * Upload rules json to bucket?
 * Agent self update?
 * deb, rpm, etc for the agent

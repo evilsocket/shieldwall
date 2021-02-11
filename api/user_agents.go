@@ -78,12 +78,16 @@ func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
 		log.Info("registered new agent %s for %s", agent.Name, user.Email)
 
 		JSON(w, http.StatusOK, agent)
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }
 
 func (api *API) UserGetAgents(w http.ResponseWriter, r *http.Request) {
 	if user := api.authorized(w, r); user != nil {
 		JSON(w, http.StatusOK, user.Agents)
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }
 
@@ -109,6 +113,8 @@ func (api *API) UserGetAgent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ERROR(w, http.StatusNotFound, fmt.Errorf("not found"))
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }
 
@@ -158,6 +164,8 @@ func (api *API) UserUpdateAgent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ERROR(w, http.StatusNotFound, fmt.Errorf("not found"))
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }
 
@@ -188,5 +196,7 @@ func (api *API) UserDeleteAgent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ERROR(w, http.StatusNotFound, fmt.Errorf("not found"))
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }

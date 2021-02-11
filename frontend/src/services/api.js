@@ -21,6 +21,7 @@ export const API_PORT = apiPort;
 export const API_BASE_URL = API_PROTO + '://' + API_HOST + ':' + API_PORT + '/api/v1';
 
 export const API_LOGIN_URL = API_BASE_URL + '/user/login';
+export const API_2STEP_URL = API_BASE_URL + '/user/2step';
 export const API_REGISTER_URL = API_BASE_URL + '/user/register';
 export const API_VERIFICATION_URL = API_BASE_URL + '/user/verify';
 

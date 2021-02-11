@@ -10,6 +10,7 @@ import (
 
 type UserUpdateRequest struct {
 	NewPassword string `json:"password"`
+	Use2FA      bool   `json:"use_2fa"`
 }
 
 func (api *API) UserUpdate(w http.ResponseWriter, r *http.Request) {
@@ -28,12 +29,23 @@ func (api *API) UserUpdate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if _, err := database.UpdateUser(user, client, req.NewPassword); err != nil {
+		if _, err := database.UpdateUser(user, client, req.NewPassword, req.Use2FA); err != nil {
 			log.Debug("[%s] %v", client, err)
 			ERROR(w, http.StatusBadRequest, err)
 			return
 		}
 
-		JSON(w, http.StatusOK, "OK")
+		token, err := api.tokenFor(user, !user.Use2FA)
+		if err != nil {
+			log.Error("error updating token for user %d: %v", user.ID, err)
+		}
+
+		JSON(w, http.StatusOK, UserResponse{
+			Token:   token,
+			User:    user,
+			Address: client,
+		})
+	} else {
+		JSON(w, http.StatusForbidden, nil)
 	}
 }

@@ -21,6 +21,18 @@ export const auth = {
         }
       );
     },
+    step2({ commit }, code) {
+      return AuthService.step2(code).then(
+          user => {
+            commit('step2Success', user);
+            return Promise.resolve(user);
+          },
+          error => {
+            commit('loginFailure');
+            return Promise.reject(error);
+          }
+      );
+    },
     logout({ commit }) {
       AuthService.logout();
       commit('logout');
@@ -52,6 +64,10 @@ export const auth = {
   },
   mutations: {
     loginSuccess(state, user) {
+      state.status.loggedIn = !user.data.use_2fa;
+      state.user = user;
+    },
+    step2Success(state, user) {
       state.status.loggedIn = true;
       state.user = user;
     },

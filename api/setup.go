@@ -65,6 +65,7 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 				r.Post("/register", api.UserRegister)
 				r.Get("/verify/{verification:[A-Fa-f0-9]{64}}", api.UserVerify)
 				r.Post("/login", api.UserLogin)
+				r.Post("/2step", api.UserSecondStep)
 
 				r.Post("/", api.UserUpdate)
 

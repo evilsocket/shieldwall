@@ -75,7 +75,7 @@ import {API_DEV} from '../services/api';
 
 export default {
   name: 'Login',
-  components: { VueRecaptcha },
+  components: {VueRecaptcha},
 
   data() {
     return {
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     handleFormSubmit() {
-      if(this.dev === true) {
+      if (this.dev === true) {
         this.handleLogin();
       }
     },
@@ -113,7 +113,13 @@ export default {
         if (this.user.email && this.user.password) {
           this.$store.dispatch('auth/login', this.user).then(
               () => {
-                this.$router.push('/agents');
+                // login ok but not logged = 2fa enabled
+                if (this.$store.state.auth.status.loggedIn === false) {
+                  window.console.log("2fa required for user");
+                  this.$router.push('/2step');
+                } else {
+                  this.$router.push('/agents');
+                }
               },
               error => {
                 this.loading = false;

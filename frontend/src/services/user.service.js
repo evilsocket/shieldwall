@@ -7,9 +7,10 @@ class UserService {
     return axios.get(API_AGENTS_URL, { headers: authHeader() });
   }
 
-  update(new_password) {
+  update(new_password, use_2fa) {
     return axios.post(API_USER_UPDATE_URL, {
-      password: new_password
+      password: new_password,
+      use_2fa: use_2fa
     }, { headers: authHeader() });
   }
 

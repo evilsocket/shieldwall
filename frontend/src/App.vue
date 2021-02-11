@@ -9,8 +9,7 @@
         </li>
       </div>
 
-
-      <div v-if="!currentUser" class="navbar-nav ml-auto">
+      <div v-if="!currentUser && !loggedIn" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/register" class="nav-link">
             <font-awesome-icon icon="user" /> Sign Up
@@ -23,7 +22,7 @@
         </li>
       </div>
 
-      <div v-if="currentUser" class="navbar-nav ml-auto">
+      <div v-if="loggedIn && currentUser" class="navbar-nav ml-auto">
         <li class="nav-item">
           <router-link to="/agents" class="nav-link">
             <font-awesome-icon icon="desktop" />
@@ -42,6 +41,14 @@
           </a>
         </li>
       </div>
+
+      <div v-if="currentUser && !loggedIn" class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href @click.prevent="logOut">
+            <font-awesome-icon icon="sign-out-alt" />Logout
+          </a>
+        </li>
+      </div>
     </nav>
 
     <div class="container-fluid">
@@ -52,7 +59,15 @@
 
 <script>
 export default {
+  mounted() {
+    window.console.log("app.loggedIn = ",this.loggedIn);
+    window.console.log("app.currentUser = ",this.currentUser);
+  },
   computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    },
+
     currentUser() {
       return this.$store.state.auth.user;
     },

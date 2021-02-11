@@ -14,11 +14,13 @@ var (
 	ErrTokenExpired      = errors.New("jwt token expired")
 	ErrTokenIncomplete   = errors.New("jwt token is missing required fields")
 	ErrTokenUnauthorized = errors.New("jwt token authorized field is false (?!)")
+	ErrToken2FA          = errors.New("requires 2fa step")
 )
 
-func (api *API) tokenFor(user *database.User) (string, error) {
+func (api *API) tokenFor(user *database.User, passed2FA bool) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
+	claims["2fa_passed"] = passed2FA
 	claims["user_id"] = user.ID
 	claims["expires_at"] = time.Now().Add(time.Duration(api.config.TokenTTL) * time.Second).Format(time.RFC3339)
 
@@ -51,6 +53,7 @@ func (api *API) validateToken(header string) (jwt.MapClaims, error) {
 	required := []string{
 		"expires_at",
 		"authorized",
+		"2fa_passed",
 		"user_id",
 	}
 	for _, req := range required {
@@ -68,5 +71,10 @@ func (api *API) validateToken(header string) (jwt.MapClaims, error) {
 	} else if claims["authorized"].(bool) != true {
 		return nil, ErrTokenUnauthorized
 	}
+
+	if claims["2fa_passed"].(bool) == false {
+		return claims, ErrToken2FA
+	}
+
 	return claims, err
 }
