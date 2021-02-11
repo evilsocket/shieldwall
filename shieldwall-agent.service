@@ -10,6 +10,7 @@ PermissionsStartOnly=true
 ExecStart=/usr/bin/shieldwall-agent -log /var/log/shieldwall.log
 Restart=always
 RestartSec=30
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target

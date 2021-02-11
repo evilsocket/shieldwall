@@ -49,7 +49,4 @@ To run it manually:
 
 ### Notes on future ideas
 
-* Precompile agent and make installation process easier.
-* deb, rpm, etc for the agent?
-* Agent self update?
 * Upload rules json to bucket?

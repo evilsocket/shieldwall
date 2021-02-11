@@ -62,7 +62,9 @@ period: 10
 timeout: 120
 # list of ip addresses to always allow just in case
 allow:
-  - '127.0.0.1'</pre>
+  - '127.0.0.1'
+# check for newer versions and self update the agent
+update: true</pre>
           <div
               v-if="submitted && errors.has('token')"
               class="alert-danger"
