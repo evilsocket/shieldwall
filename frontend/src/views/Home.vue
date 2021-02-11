@@ -16,10 +16,12 @@
 
       <hr class="my-4">
 
-      <p style="text-align: center;">
-        The shieldwall agent embraces the zero trust principle and instruments your server firewall to block inbound
-        connections from every IP on any port, by default. The website and API allow you to push policies
-        to your agents and temporarily allow you to reach a certain port from your IP.
+      <p style="text-align: center">
+        ShieldWall embraces the zero-trust principle and instruments your server firewall to block inbound
+        connections from every IP on any port, by default.
+      </p>
+      <p style="text-align: center">
+        This website allows you to push policies to your agents and temporarily unlock certain ports from your IP.
       </p>
 
       <div class="container">
