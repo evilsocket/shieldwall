@@ -54,4 +54,4 @@ install_agent:
 	@service shieldwall-agent restart
 
 self_update:
-	clear && git checkout . && git pull && make clean && make api && sudo make install_api
+	clear && git checkout . && git pull -X theirs && make clean && make api && sudo make install_api
