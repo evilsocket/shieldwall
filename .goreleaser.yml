@@ -23,11 +23,13 @@ builds:
 
 archives:
   - id: archive
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    name_template: "shieldwall-agent_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format: 'tar.gz'
     files:
       - LICENSE.md
       - shieldwall-agent.service
+      - agent.example.yaml
+      - install.sh
 
 checksum:
   name_template: 'checksums.txt'
@@ -42,3 +44,4 @@ changelog:
       - '^docs:'
       - 'typo'
       - '^test:'
+      - 'misc: small fix or general refactoring i did not bother commenting'
