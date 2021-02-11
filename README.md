@@ -49,7 +49,8 @@ To run it manually:
 
 ### TODO
 
-* Upload rules json to bucket?
+
+* Precompile agent and make installation process easier.
+* deb, rpm, etc for the agent?
 * Agent self update?
-* deb, rpm, etc for the agent
-* Agent config file download / curl https://shieldwall.me/anget-install-12345 | sh ?
+* Upload rules json to bucket?

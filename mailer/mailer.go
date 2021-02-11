@@ -23,7 +23,7 @@ func (m *Mailer) Send(from, to, subject, body string) error {
 	m.Lock()
 	defer m.Unlock()
 
-	log.Debug("sending email to %s via %s:%d ...", to, m.conf.Address, m.conf.Port)
+	log.Debug("sending email to %s via %s:%d, from=%s ...", to, m.conf.Address, m.conf.Port, from)
 
 	msg := gomail.NewMessage()
 
