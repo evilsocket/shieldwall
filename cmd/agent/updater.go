@@ -40,7 +40,7 @@ func updater() {
 		m := versionParser.FindStringSubmatch(location)
 		if len(m) == 2 {
 			latest := m[1]
-			log.Debug("Latest version is '%s'", latest)
+			log.Debug("latest version is '%s'", latest)
 			if version.Version != latest {
 				log.Important("update to %s available at %s", latest, location)
 			} else {
