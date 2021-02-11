@@ -45,7 +45,7 @@ func (api *API) UserRegister(w http.ResponseWriter, r *http.Request) {
 	log.Info("[%s] registered new user %s", user.Address, user.Email)
 
 	// prepare and send verification email
-	link := fmt.Sprintf("%s/verify/%s", api.config.URL, user.Verification)
+	link := fmt.Sprintf("%s/#/verify/%s", api.config.URL, user.Verification)
 
 	emailSubject := "shieldwall.me account verification"
 	emailBody := "Follow this link to complete your registration.<br/><br/>" +
