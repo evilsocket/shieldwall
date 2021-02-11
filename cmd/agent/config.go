@@ -20,6 +20,8 @@ type Config struct {
 	DataPath string `yaml:"data"`
 	// list of addresses to pre allow
 	Allow []string `yaml:"allow"`
+	// check for newer versions and self update the agent
+	Update bool `yaml:"update"`
 }
 
 func LoadAgentConfig(fileName string) (*Config, error) {

@@ -13,3 +13,5 @@ timeout: 0
 # list of ip addresses to always allow just in case
 allow:
   - '127.0.0.1'
+# check for newer versions and self update the agent
+update: true

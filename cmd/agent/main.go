@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	err     = (error)(nil)
-	conf    = (* Config)(nil)
-	state   = (*State)(nil)
-	signals = make(chan os.Signal, 1)
+	err               = (error)(nil)
+	conf              = (* Config)(nil)
+	state             = (*State)(nil)
+	signals           = make(chan os.Signal, 1)
 )
 
 func signalHandler() {
@@ -68,6 +68,10 @@ func main() {
 	// apply previous rules from the saved state
 	if err = firewall.Apply(state.Rules); err != nil {
 		log.Fatal("%v", err)
+	}
+
+	if conf.Update {
+		go updater()
 	}
 
 	// TODO: split in APIConfig
