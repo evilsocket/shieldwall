@@ -22,9 +22,7 @@ builds:
     binary: shieldwall-agent
 
 archives:
-  -
-    builds:
-      - default
+  - id: archive
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format: 'tar.gz'
     files:
