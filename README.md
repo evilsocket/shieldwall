@@ -47,8 +47,7 @@ To run it manually:
 
     ./_build/shieldwall-api -config api.yaml
 
-### TODO
-
+### Notes on future ideas
 
 * Precompile agent and make installation process easier.
 * deb, rpm, etc for the agent?
