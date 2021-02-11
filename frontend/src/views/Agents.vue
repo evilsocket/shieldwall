@@ -49,11 +49,11 @@
           </a>
         </td>
         <td class="fit">
-          <small v-if="agent.address">{{ agent.address }}</small>(
+          <small v-if="agent.address">{{ agent.address }}</small>
           <small v-if="!agent.address" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">
-          <small v-if="agent.user_agent">{{ agent.user_agent }}</small>(
+          <small v-if="agent.user_agent">{{ agent.user_agent }}</small>
           <small v-if="!agent.user_agent" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">
