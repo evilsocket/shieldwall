@@ -135,7 +135,12 @@ func UpdateUser(user *User, ip string, newPassword string, use2FA bool) (*User, 
 
 func FindUserByID(id int) (*User, error) {
 	var found User
-	if err := db.Preload("Agents").Find(&found, id).Error; err == gorm.ErrRecordNotFound {
+
+	err := db.Preload("Agents", func(db *gorm.DB) *gorm.DB {
+		return db.Order("agents.updated_at DESC")
+	}).Find(&found, id).Error
+
+	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if err != nil {
 		return nil, err
