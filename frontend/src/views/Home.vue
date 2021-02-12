@@ -35,7 +35,7 @@
                 <p class="card-text">Create a free account and use this server.</p>
                 <a href="/#/register" class="btn btn-primary" v-if="!currentUser">Sign Up</a>
                 &nbsp;
-                <a href="https://github.com/evilsocket/shieldwall/blob/main/README.md#quick-start" target="_blank" class="btn btn-info" >Quick Start</a>
+                <a href="https://github.com/evilsocket/shieldwall/wiki/Quick-Start" target="_blank" class="btn btn-info" >Quick Start</a>
               </div>
 
             </div>

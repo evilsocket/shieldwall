@@ -34,47 +34,9 @@ from github:
 
 Log into your https://shieldwall.me/ account to control the agent.
 
-## Compile the agent from sources
+## Compile from Sources
 
-Requires go and make, clone the repo and then:
-    
-    cd /path/to/repo
-    make agent
-
-To install it as a systemd service:
-
-    sudo make install_agent
-
-To run it manually:
-
-    sudo ./_build/shieldwall-agent -config agent.yaml
-
-## Compile and run your own API + frontend
-
-Requires go and make. The API needs to be hosted on an IP that the agents can reach.
-
-    cp api.example.yaml api.yaml
-
-Edit both to your needs, the API requires a database that can be started with:
-
-    cp database.example.env database.env
-    docker-compose up
-
-One the database is running you can compile and start the API service:
-
-    make api
-
-To install it as a systemd service:
-
-    sudo make install_api
-
-To run it manually:
-
-    ./_build/shieldwall-api -config api.yaml
-
-## Notes on future ideas
-
-* Upload rules json to bucket?
+https://github.com/evilsocket/shieldwall/wiki
 
 ## License
 

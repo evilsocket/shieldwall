@@ -5,7 +5,7 @@
 
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a href="https://github.com/evilsocket/shieldwall/blob/main/README.md" target="_blank" class="nav-link">
+          <a href="https://github.com/evilsocket/shieldwall/wiki" target="_blank" class="nav-link">
             <font-awesome-icon icon="archive" /> <span class="d-none d-sm-inline-block">Docs</span>
           </a>
         </li>
