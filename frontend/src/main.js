@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
 import {library} from '@fortawesome/fontawesome-svg-core';
+
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {faDesktop, faHome, faSignInAlt, faSignOutAlt, faTerminal, faArchive, faUser, faUserPlus} from '@fortawesome/free-solid-svg-icons';
 import VueTimeago from 'vue-timeago'

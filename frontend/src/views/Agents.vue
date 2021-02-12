@@ -25,7 +25,7 @@
         <th scope="col" class="fit">Last Update</th>
         <th scope="col">Name</th>
         <th scope="col">Address</th>
-        <th scope="col">Info</th>
+        <th scope="col">Version</th>
         <th scope="col">Rules</th>
         <th scope="col"></th>
       </tr>
@@ -53,7 +53,7 @@
           <small v-if="!agent.address" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">
-          <small v-if="agent.user_agent">{{ agent.user_agent }}</small>
+          <small v-if="agent.user_agent">{{ agent.user_agent.replace('ShieldWall Agent ', '') }}</small>
           <small v-if="!agent.user_agent" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">

@@ -7,6 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/evilsocket/islazy v1.10.6
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-chi/chi v1.5.1
 	github.com/go-chi/cors v1.1.1
 	github.com/go-chi/httprate v0.4.0
