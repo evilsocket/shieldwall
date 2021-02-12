@@ -11,7 +11,7 @@ ShieldWall embraces the zero-trust principle and instruments your server firewal
 ### Quick Start
 
 Download the [latest precompiled release](https://github.com/evilsocket/shieldwall/releases/latest) and install it 
-with (adjust url to the latest version and your server architecture).
+with (adjust the url to the latest version and your server architecture).
 
     mkdir /tmp/sw
     cd /tmp/sw
