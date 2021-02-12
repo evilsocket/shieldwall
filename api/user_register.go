@@ -9,11 +9,6 @@ import (
 	"net/http"
 )
 
-type UserRegisterRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 func (api *API) UserRegister(w http.ResponseWriter, r *http.Request) {
 	if api.config.AllowNewUsers == false {
 		ERROR(w, http.StatusLocked, fmt.Errorf("apologies, registrations are closed at the moment"))

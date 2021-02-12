@@ -7,9 +7,6 @@ import (
 	"github.com/evilsocket/shieldwall/firewall"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"net"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -44,7 +41,7 @@ func FindAgentByToken(token string) (*Agent, error) {
 	}
 }
 
-func validateAgentData(name string, rules []firewall.Rule) error {
+func validateAgentData(name string, rules []*firewall.Rule) error {
 	if name = str.Trim(name); len(name) < MinAgentNameLength {
 		return fmt.Errorf("agent name must be at least %d characters long", MinAgentNameLength)
 	}
@@ -54,45 +51,15 @@ func validateAgentData(name string, rules []firewall.Rule) error {
 	}
 
 	for _, rule := range rules {
-		if net.ParseIP(rule.Address) == nil {
-			return fmt.Errorf("%s is not a valid address", rule.Address)
-		}
-
-		if rule.TTL < 0 {
-			return fmt.Errorf("really? %d", rule.TTL)
-		}
-
-		for _, port := range rule.Ports {
-			if strings.Index(port, ":") != -1 {
-				// parse as range
-				if parts := strings.Split(port, ":"); len(parts) != 2 {
-					return fmt.Errorf("%s is not a valid port range", port)
-				} else if from, err := strconv.ParseInt(parts[0], 10, 32); err != nil {
-					return fmt.Errorf("%s is not a valid port", parts[0])
-				} else if to, err := strconv.ParseInt(parts[1], 10, 32); err != nil {
-					return fmt.Errorf("%s is not a valid port", parts[1])
-				} else if to <= from {
-					return fmt.Errorf("bad port range, %d is not >= %d", to, from)
-				} else if from < 1 || from > 65535 {
-					return fmt.Errorf("%d is outside the valid ports range", from)
-				} else if to < 1 || to > 65535 {
-					return fmt.Errorf("%d is outside the valid ports range", to)
-				}
-			} else {
-				// parse as number
-				if p, err := strconv.ParseInt(port, 10, 32); err != nil {
-					return fmt.Errorf("%s is not a valid port", port)
-				} else if p < 1 || p > 65535 {
-					return fmt.Errorf("%d is outside the valid ports range", p)
-				}
-			}
+		if err := rule.Validate(); err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func RegisterAgent(user *User, name string, rules []firewall.Rule) (*Agent, error) {
+func RegisterAgent(user *User, name string, rules []*firewall.Rule) (*Agent, error) {
 	if err := validateAgentData(name, rules); err != nil {
 		return nil, err
 	}
@@ -121,7 +88,7 @@ func RegisterAgent(user *User, name string, rules []firewall.Rule) (*Agent, erro
 	return &newAgent, nil
 }
 
-func UpdateAgent(agent *Agent, name string, rules []firewall.Rule) error {
+func UpdateAgent(agent *Agent, name string, rules []*firewall.Rule) error {
 	if err := validateAgentData(name, rules); err != nil {
 		return err
 	}

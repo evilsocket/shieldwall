@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/database"
-	"github.com/evilsocket/shieldwall/firewall"
 	"github.com/go-chi/chi"
 	"io"
 	"net/http"
@@ -40,11 +39,6 @@ func (api *API) authorized(w http.ResponseWriter, r *http.Request) *database.Use
 
 	user.Address = client
 	return user
-}
-
-type AgentCreationRequest struct {
-	Name  string          `json:"name"`
-	Rules []firewall.Rule `json:"rules"`
 }
 
 func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
@@ -116,11 +110,6 @@ func (api *API) UserGetAgent(w http.ResponseWriter, r *http.Request) {
 	} else {
 		JSON(w, http.StatusForbidden, nil)
 	}
-}
-
-type AgentUpdateRequest struct {
-	Name  string          `json:"name"`
-	Rules []firewall.Rule `json:"rules"`
 }
 
 func (api *API) UserUpdateAgent(w http.ResponseWriter, r *http.Request) {

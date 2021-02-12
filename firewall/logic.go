@@ -64,18 +64,27 @@ func Apply(rules []Rule) (err error) {
 
 		// for each protocol
 		for _, proto := range protos {
+			source := []string{"-s", rule.Address}
+			if rule.AddressType == AddressRange {
+				// use iprange module
+				source = []string {
+					"-m",
+					"iprange",
+					"--src-range",
+					rule.Address,
+				}
+			}
+
 			action := "ACCEPT"
 			if rule.Type == RuleBlock {
 				action = "DROP"
 			}
+
 			for _, port := range rule.Ports {
-				// for each port
-				out, err := cmd(binary,
-					"-A", "INPUT",
-					"-s", rule.Address,
-					"-p", proto,
-					"--dport", port,
-					"-j", action)
+				args := []string {"-A", "INPUT"}
+				args = append(args, source...)
+				args = append(args, "-p", proto, "--dport", port, "-j", action)
+				out, err := cmd(binary, args...)
 				if err != nil {
 					return fmt.Errorf("error applying rule %s.%s.%s.%s: %v",
 						rule.Type,

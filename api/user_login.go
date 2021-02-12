@@ -9,17 +9,6 @@ import (
 	"net/http"
 )
 
-type UserLoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type UserResponse struct {
-	Token   string         `json:"token"`
-	User    *database.User `json:"data"`
-	Address string         `json:"address"`
-}
-
 func (api *API) UserLogin(w http.ResponseWriter, r *http.Request) {
 	var req UserLoginRequest
 
@@ -103,10 +92,6 @@ func (api *API) authorizedForStep2(w http.ResponseWriter, r *http.Request) *data
 
 	user.Address = client
 	return user
-}
-
-type Step2Request struct {
-	Code string `json:"code"`
 }
 
 func (api *API) UserSecondStep(w http.ResponseWriter, r *http.Request) {

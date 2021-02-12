@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-type UserUpdateRequest struct {
-	NewPassword string `json:"password"`
-	Use2FA      bool   `json:"use_2fa"`
-}
 
 func (api *API) UserUpdate(w http.ResponseWriter, r *http.Request) {
 	if user := api.authorized(w, r); user != nil {
