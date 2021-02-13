@@ -39,13 +39,6 @@ func reset() error {
 		log.Debug("flush INPUT: %s", out)
 	}
 
-	out, err = cmd(binary, "-F", "LOGNDROP")
-	if err != nil {
-		return err
-	} else {
-		log.Debug("flush LOGNDROP: %s", out)
-	}
-
 	// might or might not exist so ignore errors
 	cmd(binary, "-F", "LOGNDROP")
 	cmd(binary, "-X", "LOGNDROP")
