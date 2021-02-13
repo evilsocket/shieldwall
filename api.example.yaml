@@ -12,7 +12,7 @@ api:
   address: "0.0.0.0:443"
   # 100mb limit to avoid DoS
   req_max_size: 104857600
-  token_ttl: 86400
+  token_ttl: 86400 # 24h
   secret: "CHANGE ME CHANGE ME"
   max_agents_per_user: 10
   cache_ttl: 600 # 10m
