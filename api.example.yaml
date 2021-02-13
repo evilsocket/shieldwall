@@ -15,7 +15,7 @@ api:
   token_ttl: 86400
   secret: "CHANGE ME CHANGE ME"
   max_agents_per_user: 10
-  cache_ttl: 60 # 10m
+  cache_ttl: 600 # 10m
   allow_new_users: false
 
 mail:
