@@ -5,7 +5,6 @@
         <h1 class="display-4">
           <img src="/logo.png" width="50px"/>
           shieldwall
-          <small class="beta">beta</small>
         </h1>
         <br/>
 
