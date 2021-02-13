@@ -52,19 +52,30 @@
 data: '/var/lib/shieldwall/'
 # path to iptables
 iptables: '/sbin/iptables'
-# api server to use
-server: 'https://shieldwall.me'
-# authentication token
-token: '{{ agent.token }}'
-# api polling period in seconds
-period: 10
-# api timeout in seconds or 0 for no timeout
-timeout: 120
+# check for newer versions and self update the agent
+update: true
+
+# api configuration
+api:
+  # api server to use
+  server: 'https://shieldwall.me'
+  # authentication token
+  token: '{{ agent.token }}'
+  # api polling period in seconds
+  period: 10
+  # api timeout in seconds or 0 for no timeout
+  timeout: 0
+
 # list of ip addresses to always allow just in case
 allow:
   - '127.0.0.1'
-# check for newer versions and self update the agent
-update: true</pre>
+
+# log dropped packets
+drops:
+  log: true
+  limit: '10/min'
+  prefix: 'shieldwall-dropped'
+  level: 4</pre>
           <div
               v-if="submitted && errors.has('token')"
               class="alert-danger"

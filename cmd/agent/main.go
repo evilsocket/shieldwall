@@ -66,7 +66,7 @@ func main() {
 	}
 
 	// apply previous rules from the saved state
-	if err = firewall.Apply(state.Rules); err != nil {
+	if err = firewall.Apply(state.Rules, conf.Drops); err != nil {
 		log.Fatal("%v", err)
 	}
 
@@ -74,13 +74,7 @@ func main() {
 		go updater()
 	}
 
-	// TODO: split in APIConfig
-	api := API{
-		Server:  conf.Server,
-		Token:   conf.Token,
-		Timeout: conf.Timeout,
-	}
-
+	api := NewAPI(conf.API)
 	// main loop
 	for {
 		if rules, err := api.FetchRules(); err != nil {
@@ -97,7 +91,7 @@ func main() {
 				addAllowRules(state)
 			}
 
-			if err = firewall.Apply(state.Rules); err != nil {
+			if err = firewall.Apply(state.Rules, conf.Drops); err != nil {
 				log.Fatal("%v", err)
 			}
 		}
@@ -108,6 +102,6 @@ func main() {
 			log.Debug("state saved to %s", conf.DataPath)
 		}
 
-		time.Sleep(time.Second * time.Duration(conf.Period))
+		time.Sleep(time.Second * time.Duration(conf.API.Period))
 	}
 }
