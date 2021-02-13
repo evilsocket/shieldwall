@@ -70,7 +70,7 @@ api:
 allow:
   - '127.0.0.1'
 
-# log dropped packets
+# log dropped packets to syslog
 drops:
   log: true
   limit: '10/min'
