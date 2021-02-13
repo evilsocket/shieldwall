@@ -6,6 +6,7 @@ import (
 	"github.com/evilsocket/islazy/str"
 	"os/exec"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -24,7 +25,7 @@ func cmd(bin string, args ...string) (string, error) {
 	log.Debug("# %s %s", bin, args)
 	raw, err := exec.Command(bin, args...).CombinedOutput()
 	if err != nil {
-		log.Error("%s", str.Trim(string(raw)))
+		log.Warning("%s", str.Trim(string(raw)))
 		return "", err
 	} else {
 		return str.Trim(string(raw)), nil
@@ -32,16 +33,24 @@ func cmd(bin string, args ...string) (string, error) {
 }
 
 func reset() error {
-	out, err := cmd(binary, "-F", "INPUT")
-	if err != nil {
-		return err
-	} else {
-		log.Debug("flush INPUT: %s", out)
+	commands := []string {
+		"-P INPUT ACCEPT",
+		"-P FORWARD ACCEPT",
+		"-P OUTPUT ACCEPT",
+		"-t nat -F",
+		"-t mangle -F",
+		"-F",
+		"-X",
 	}
 
-	// might or might not exist so ignore errors
-	cmd(binary, "-F", "LOGNDROP")
-	cmd(binary, "-X", "LOGNDROP")
+	for _, c := range commands {
+		out, err := cmd(binary, strings.Split(c, " ")...)
+		if err != nil {
+			return err
+		} else {
+			log.Debug("reset(%s): %s", c, out)
+		}
+	}
 
 	return nil
 }
@@ -60,6 +69,7 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 		return fmt.Errorf("error while resetting firewall: %v", err)
 	}
 
+	// allow related connections for responses to local clients (such as DNS)
 	out, err := cmd(binary, "-A", "INPUT", "-m", "conntrack", "--ctstate", "RELATED,ESTABLISHED", "-j", "ACCEPT")
 	if err != nil {
 		return fmt.Errorf("error running conntrack step: %v", err)
