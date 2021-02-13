@@ -46,12 +46,9 @@ func reset() error {
 		log.Debug("flush LOGNDROP: %s", out)
 	}
 
-	out, err = cmd(binary, "-X", "LOGNDROP")
-	if err != nil {
-		return err
-	} else {
-		log.Debug("delete LOGNDROP: %s", out)
-	}
+	// might or might not exist so ignore errors
+	cmd(binary, "-F", "LOGNDROP")
+	cmd(binary, "-X", "LOGNDROP")
 
 	return nil
 }
