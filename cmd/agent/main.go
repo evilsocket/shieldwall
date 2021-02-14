@@ -84,15 +84,13 @@ func main() {
 		} else {
 			state.Rules = rules
 
-			if num := len(state.Rules); num > 0 {
-				log.Debug("got rules baby %#v", state.Rules)
-				if num != prev {
-					log.Info("applying %d rules", num)
-				}
-			}
-
 			if len(conf.Allow) > 0 {
 				addAllowRules(state)
+			}
+
+			num := len(state.Rules)
+			if num != prev {
+				log.Info("applying %d rules", num)
 			}
 
 			if err = firewall.Apply(state.Rules, conf.Drops); err != nil {
