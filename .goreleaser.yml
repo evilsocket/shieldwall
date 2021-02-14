@@ -29,6 +29,7 @@ archives:
       - LICENSE.md
       - shieldwall-agent.service
       - update.sh
+      - install.sh
 
 checksum:
   name_template: 'checksums.txt'
