@@ -123,7 +123,7 @@ drops:
               />
             </td>
             <td class="fit">
-              <select class="form-control">
+              <select class="form-control" v-model="rule.protocol">
                 <option :selected="rule.protocol == 'tcp'" value="tcp">TCP</option>
                 <option :selected="rule.protocol == 'udp'" value="udp">UDP</option>
                 <option :selected="rule.protocol == 'all'" value="all">All</option>
