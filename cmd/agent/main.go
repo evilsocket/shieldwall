@@ -77,6 +77,8 @@ func main() {
 	api := NewAPI(conf.API)
 	// main loop
 	for {
+		prev := len(state.Rules)
+
 		if rules, err := api.FetchRules(); err != nil {
 			log.Error("error polling api: %v", err)
 		} else {
@@ -84,7 +86,9 @@ func main() {
 
 			if num := len(state.Rules); num > 0 {
 				log.Debug("got rules baby %#v", state.Rules)
-				log.Info("applying %d rules", num)
+				if num != prev {
+					log.Info("applying %d rules", num)
+				}
 			}
 
 			if len(conf.Allow) > 0 {
