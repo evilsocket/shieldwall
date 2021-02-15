@@ -91,6 +91,12 @@ drops:
              v-on:click.prevent="handleRuleAdd()">
             +
           </a>
+
+          <span class="float-right d-inline">
+            <small style="font-size: 0.9rem">
+              <a href="https://github.com/evilsocket/shieldwall/wiki/Rules" target="_blank">Help</a>
+            </small>
+          </span>
         </h3>
 
         <table class="table table-sm table-striped table-hover" id="rules" v-if="agent.rules.length">
