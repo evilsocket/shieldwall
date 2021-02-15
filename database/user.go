@@ -21,7 +21,7 @@ type User struct {
 	CreatedAt    time.Time      `gorm:"index" json:"created_at"`
 	UpdatedAt    time.Time      `gorm:"index" json:"updated_at"`
 	DeletedAt    gorm.DeletedAt `gorm:"index" json:"-"`
-	Email        string         `gorm:"index" json:"email"`
+	Email        string         `gorm:"uniqueIndex" json:"email"`
 	Verification string         `gorm:"index" json:"-"`
 	Verified     bool           `gorm:"index" json:"-"`
 	Use2FA       bool           `gorm:"default:true" json:"use_2fa"` // i know it's not 2fa yet
