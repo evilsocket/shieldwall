@@ -6,7 +6,7 @@
           src="/logo.png"
           class="profile-img-card"
       />
-      <form name="form">
+      <form name="form" @submit.prevent="handleFormSubmit">
         <div v-if="!successful">
           <div class="form-group">
             <label for="email">Email</label>
@@ -42,11 +42,19 @@
           <div class="form-group">
             <vue-recaptcha
                 ref="recaptcha"
+                v-if="!dev"
                 @verify="onCaptchaVerified"
                 @expired="onCaptchaExpired"
                 sitekey="6LewaVIaAAAAAFn37I4KpU4OOKcjJBh_D0GXB8gC">
-              <button class="btn btn-primary btn-block">Sign Up</button>
+              <button class="btn btn-primary btn-block" :disabled="loading">
+                <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+                Sign Up
+              </button>
             </vue-recaptcha>
+            <button class="btn btn-primary btn-block" :disabled="loading" v-if="dev">
+              <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+              Sign Up
+            </button>
           </div>
 
         </div>
@@ -70,6 +78,7 @@
 <script>
 import User from '../models/user';
 import VueRecaptcha from 'vue-recaptcha';
+import {API_DEV} from "@/services/api";
 
 export default {
   name: 'Register',
@@ -78,9 +87,10 @@ export default {
   data() {
     return {
       user: new User('', ''),
-      submitted: false,
       successful: false,
-      message: ''
+      loading: false,
+      message: '',
+      dev: API_DEV
     };
   },
   computed: {
@@ -96,15 +106,17 @@ export default {
   methods: {
     handleRegister() {
       this.message = '';
-      this.submitted = true;
       this.$validator.validate().then(isValid => {
+        this.loading = true;
         if (isValid) {
           this.$store.dispatch('auth/register', this.user).then(
               data => {
+                this.loading = false;
                 this.message = data;
                 this.successful = true;
               },
               error => {
+                this.loading = false;
                 this.message =
                     (error.response && error.response.data && error.response.data.error) ||
                     error.message ||
@@ -114,6 +126,12 @@ export default {
           );
         }
       });
+    },
+
+    handleFormSubmit() {
+      if (this.dev === true) {
+        this.handleRegister();
+      }
     },
 
     onCaptchaExpired: function () {
