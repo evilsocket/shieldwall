@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
-      <div v-if="status" class="alert" role="alert">{{status}}</div>
-      <div v-if="message" class="alert alert-success" role="alert">{{message}}</div>
-      <div v-if="error" class="alert alert-danger" role="alert">{{error}}</div>
-    </div>
+  <div class="container">
+    <div v-if="status" class="alert" role="alert">{{ status }}</div>
+    <div v-if="message" class="alert alert-success" role="alert">{{ message }}</div>
+    <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
+  </div>
 </template>
 
 <script>
@@ -34,6 +34,10 @@ export default {
               (error.response && error.response.data && error.response.data.error) ||
               error.message ||
               error.toString();
+          if (error.response.status === 401) {
+            this.$store.dispatch('auth/logout');
+            this.$router.push('/login');
+          }
         }
     );
   }

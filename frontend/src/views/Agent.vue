@@ -235,8 +235,13 @@ export default {
                 (error.response && error.response.data && error.response.data.error) ||
                 error.error ||
                 error.toString();
-            this.$router.push('/agents');
-            return;
+
+            if(error.response.status === 401) {
+              this.$store.dispatch('auth/logout');
+              this.$router.push('/login');
+            } else {
+              this.$router.push('/agents');
+            }
           }
       );
     }
