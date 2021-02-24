@@ -24,6 +24,53 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label><strong>Alert</strong></label>
+        <br>
+
+        <div class="form-group form-inline" v-if="editing">
+
+          <label for="alert_after">
+           If this agent was not active for the last
+          </label>
+          <select class="form-control form-control-sm" v-model.number="agent.alert_after" type="number" id="alert_after"
+                  name="alert_after"
+                  style="margin-left: 5px">
+            <option :selected="agent.alert_after == 0" value="0">never (alert disabled)</option>
+            <option :selected="agent.alert_after == 300" value="300">5 minutes</option>
+            <option :selected="agent.alert_after == 600" value="600">10 minutes</option>
+            <option :selected="agent.alert_after == 1800" value="1800">30 minutes</option>
+            <option :selected="agent.alert_after == 3600" value="3600">1 hour</option>
+            <option :selected="agent.alert_after == 10800" value="10800">3 hours</option>
+            <option :selected="agent.alert_after == 21600" value="21600">6 hours</option>
+          </select>
+          <div
+              v-if="submitted && errors.has('alert_at')"
+              class="alert-danger"
+          >{{ errors.first('alert_at') }}
+          </div>
+
+          <label for="alert_period" style="margin-left: 5px">
+            send an email alert
+          </label>
+          <select class="form-control form-control-sm" v-model.number="agent.alert_period" type="number" id="alert_period"
+                  name="alert_period"
+                  style="margin-left: 5px">
+            <option :selected="agent.alert_period == 0" value="0">once</option>
+            <option :selected="agent.alert_period == 1800" value="1800">every 30 minutes</option>
+            <option :selected="agent.alert_period == 3600" value="1800">every hour</option>
+            <option :selected="agent.alert_period == 10800" value="10800">every 3 hours</option>
+            <option :selected="agent.alert_period == 21600" value="21600">every 6 hours</option>
+          </select>
+          <div
+              v-if="submitted && errors.has('alert_period')"
+              class="alert-danger"
+          >{{ errors.first('alert_period') }}
+          </div>
+
+        </div>
+      </div>
+
       <span v-if="editing">
         <div class="form-group">
           <label for="token"><strong>Token</strong></label>
@@ -236,7 +283,7 @@ export default {
                 error.error ||
                 error.toString();
 
-            if(error.response.status === 401) {
+            if (error.response.status === 401) {
               this.$store.dispatch('auth/logout');
               this.$router.push('/login');
             } else {

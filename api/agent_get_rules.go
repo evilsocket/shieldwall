@@ -72,7 +72,7 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 
 	// log.Debug("[%s %s] successfully authenticated", agentIP, agentUA)
 
-	agent.UpdatedAt = time.Now()
+	agent.SeenAt = time.Now()
 	agent.Address = agentIP
 	agent.UserAgent = agentUA
 

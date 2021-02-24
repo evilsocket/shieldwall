@@ -37,3 +37,7 @@ func Setup(config Config) (err error) {
 func Delete(v interface{}) error {
 	return db.Delete(v).Error
 }
+
+func Save(v interface{}) error {
+	return db.Save(v).Error
+}

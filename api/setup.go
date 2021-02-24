@@ -91,6 +91,8 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 func (api *API) Run() {
 	log.Info("api starting on %s", api.config.Address)
 
+	go api.alertingLoop()
+
 	if api.config.SSL {
 		server := &http.Server{
 			Addr:      api.config.Address,

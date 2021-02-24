@@ -31,11 +31,15 @@ type Step2Request struct {
 }
 
 type AgentCreationRequest struct {
-	Name  string           `json:"name"`
-	Rules []*firewall.Rule `json:"rules"`
+	Name        string           `json:"name"`
+	Rules       []*firewall.Rule `json:"rules"`
+	AlertAfter  uint             `json:"alert_after"`
+	AlertPeriod uint             `json:"alert_period"`
 }
 
 type AgentUpdateRequest struct {
-	Name  string           `json:"name"`
-	Rules []*firewall.Rule `json:"rules"`
+	Name        string           `json:"name"`
+	Rules       []*firewall.Rule `json:"rules"`
+	AlertAfter  uint             `json:"alert_after"`
+	AlertPeriod uint             `json:"alert_period"`
 }

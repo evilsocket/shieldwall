@@ -22,7 +22,7 @@
       <thead class="thead-dark">
       <tr>
         <th scope="col">Created</th>
-        <th scope="col" class="fit">Last Update</th>
+        <th scope="col" class="fit">Last Seen</th>
         <th scope="col">Name</th>
         <th scope="col">Address</th>
         <th scope="col">Version</th>
@@ -40,7 +40,9 @@
         </td>
         <td class="fit">
           <small>
-            <timeago :datetime="agent.updated_at" :auto-update="60"></timeago>
+            <timeago :datetime="agent.seen_at" :auto-update="60"
+                     v-if="agent.seen_at.indexOf('0001-01-01T00') == -1"></timeago>
+            <span v-if="agent.seen_at.indexOf('0001-01-01T00') != -1">never</span>
           </small>
         </td>
         <td>

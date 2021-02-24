@@ -63,7 +63,14 @@ func (api *API) UserCreateAgent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		agent, err := database.RegisterAgent(user, req.Name, req.Rules)
+		fields := database.AgentWritableFields{
+			User:        user,
+			Name:        req.Name,
+			Rules:       req.Rules,
+			AlertAfter:  req.AlertAfter,
+			AlertPeriod: req.AlertPeriod,
+		}
+		agent, err := database.RegisterAgent(&fields)
 		if err != nil {
 			ERROR(w, http.StatusBadRequest, err)
 			return
@@ -142,7 +149,16 @@ func (api *API) UserUpdateAgent(w http.ResponseWriter, r *http.Request) {
 
 		for _, agent := range user.Agents {
 			if agent.ID == uint(idNum) {
-				if err = database.UpdateAgent(&agent, req.Name, req.Rules); err != nil {
+				fields := database.AgentWritableFields{
+					ID:          agent.ID,
+					User:        user,
+					Name:        req.Name,
+					Rules:       req.Rules,
+					AlertAfter:  req.AlertAfter,
+					AlertPeriod: req.AlertPeriod,
+				}
+
+				if err = database.UpdateAgent(&agent, &fields); err != nil {
 					ERROR(w, http.StatusBadRequest, err)
 				} else {
 					cacheByAgentToken.Delete(agent.Token)
