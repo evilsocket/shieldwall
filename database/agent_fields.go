@@ -7,7 +7,7 @@ import (
 )
 
 const MinAgentNameLength = 3
-const MaxAgentRules = 10
+const MaxAgentRules = 100
 
 const MinAlertAfter = 30    // 30 seconds
 const MaxAlertAfter = 21600 // 6 hours
