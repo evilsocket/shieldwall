@@ -20,32 +20,32 @@ type State struct {
 }
 
 func LoadState(path string) (*State, error) {
+	state := State {
+		UpdatedAt: time.Now(),
+	}
+
 	if !fs.Exists(path) {
 		log.Info("creating %s", path)
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
-			return nil, err
+			return &state, err
 		}
 	}
 
 	fileName := filepath.Join(path, stateFileName)
 	if !fs.Exists(fileName) {
 		log.Debug("%s doesn't exist, returning initial state", fileName)
-		return &State{
-			UpdatedAt: time.Now(),
-		}, nil
+		return &state, nil
 	}
 
 	log.Debug("loading state from %s ...", fileName)
 
-	var state State
-
 	raw, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		return nil, fmt.Errorf("error reading %s: %v", fileName, err)
+		return &state, fmt.Errorf("error reading %s: %v", fileName, err)
 	}
 
 	if err = json.Unmarshal(raw, &state); err != nil {
-		return nil, fmt.Errorf("error decoding %s: %v", fileName, err)
+		return &state, fmt.Errorf("error decoding %s: %v", fileName, err)
 	}
 
 	return &state, nil

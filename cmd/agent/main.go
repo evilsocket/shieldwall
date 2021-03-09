@@ -57,7 +57,7 @@ func main() {
 
 	// load saved state and run rules
 	if state, err = LoadState(conf.DataPath); err != nil {
-		log.Fatal("%v", err)
+		log.Warning("%v", err)
 	}
 
 	// new state, add the entries allowed by configuration
