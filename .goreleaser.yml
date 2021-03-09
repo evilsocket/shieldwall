@@ -28,6 +28,7 @@ archives:
     files:
       - LICENSE.md
       - shieldwall-agent.service
+      - agent.example.yaml
       - update.sh
       - install.sh
 
