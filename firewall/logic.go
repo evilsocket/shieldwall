@@ -79,11 +79,11 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 
 	// for each rule
 	for _, rule := range rules {
-		protos := []string{"tcp"}
-		if rule.Protocol == ProtoUDP {
-			protos[0] = "udp"
-		} else {
-			protos = []string{"tcp", "udp"}
+		protos := []string{"tcp", "udp"}
+		if rule.Protocol == ProtoTCP {
+			protos = []string{"tcp"}
+		} else if rule.Protocol == ProtoUDP {
+			protos = []string{"udp"}
 		}
 
 		// for each protocol
