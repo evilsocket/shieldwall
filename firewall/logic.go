@@ -12,6 +12,11 @@ import (
 
 // TODO: implement factory pattern with generic interface in order to support more firewalls
 
+const (
+	swInputChain   = "SHIELDWALL"
+	swLogDropChain = "LOGNDROP"
+)
+
 type DropConfig struct {
 	Log    bool   `yaml:"log"`
 	Limit  string `yaml:"limit"`
@@ -34,12 +39,12 @@ func cmd(bin string, args ...string) (string, error) {
 
 func reset() error {
 	commands := []string{
-		"-F chain-shieldwall",
-		"-D INPUT -j chain-shieldwall",
-		"-X chain-shieldwall",
-		"-F LOGNDROP",
-		"-D INPUT -j LOGNDROP",
-		"-X LOGNDROP",
+		fmt.Sprintf("-F %s", swInputChain),
+		fmt.Sprintf("-D INPUT -j %s", swInputChain),
+		fmt.Sprintf("-X %s", swInputChain),
+		fmt.Sprintf("-F %s", swLogDropChain),
+		fmt.Sprintf("-D INPUT -j %s", swLogDropChain),
+		fmt.Sprintf("-X %s", swLogDropChain),
 	}
 
 	for _, c := range commands {
@@ -78,14 +83,14 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 	}
 
 	// create custom chain
-	if out, err = cmd(binary, "-N", "chain-shieldwall"); err != nil {
+	if out, err = cmd(binary, "-N", swInputChain); err != nil {
 		return fmt.Errorf("error creating chain-shieldwall: %v", err)
 	} else {
-		log.Debug("chain-shieldwall: %s", out)
+		log.Debug("error creating chain %s: %s", swInputChain, out)
 	}
 
 	// Accept everything on loopback
-	if out, err = cmd(binary, "-A", "chain-shieldwall", "-i", "lo", "-j", "ACCEPT"); err != nil {
+	if out, err = cmd(binary, "-A", swInputChain, "-i", "lo", "-j", "ACCEPT"); err != nil {
 		return fmt.Errorf("error applying loopback rule: %v", err)
 	} else {
 		log.Debug("loopback rule applied: %s", out)
@@ -119,7 +124,7 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 			}
 
 			for _, port := range rule.Ports {
-				args := []string{"-A", "chain-shieldwall"}
+				args := []string{"-A", swInputChain}
 				args = append(args, source...)
 				args = append(args, "-p", proto, "--dport", port, "-j", action)
 				out, err := cmd(binary, args...)
@@ -151,14 +156,14 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 		// just in case
 		// cmd(binary, "-X", "LOGNDROP");
 
-		if out, err = cmd(binary, "-N", "LOGNDROP"); err != nil {
-			return fmt.Errorf("error creating LOGNDROP: %v", err)
+		if out, err = cmd(binary, "-N", swLogDropChain); err != nil {
+			return fmt.Errorf("error creating %s: %v", swLogDropChain, err)
 		} else {
-			log.Debug("LOGNDROP: %s", out)
+			log.Debug("%s: %s", swLogDropChain, out)
 		}
 
 		out, err := cmd(binary,
-			"-A", "LOGNDROP",
+			"-A", swLogDropChain,
 			"-m", "limit", "--limit", drops.Limit,
 			"-j", "LOG",
 			"--log-prefix", fmt.Sprintf("%s: ", drops.Prefix),
@@ -169,20 +174,20 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 			log.Debug("logging: %s", out)
 		}
 
-		if out, err = cmd(binary, "-A", "LOGNDROP", "-j", "DROP"); err != nil {
+		if out, err = cmd(binary, "-A", swLogDropChain, "-j", "DROP"); err != nil {
 			return fmt.Errorf("error dropping LOGNDROP: %v", err)
 		} else {
 			log.Debug("dropping: %s", out)
 		}
 
-		target = "LOGNDROP"
+		target = swLogDropChain
 	}
 
 	// Apply custom chain on INPUT
-	if out, err := cmd(binary, "-A", "INPUT", "-j", "chain-shieldwall"); err != nil {
-		return fmt.Errorf("error running chain-shieldwall rule: %v", err)
+	if out, err := cmd(binary, "-A", "INPUT", "-j", swInputChain); err != nil {
+		return fmt.Errorf("error running %s rule: %v", swInputChain, err)
 	} else {
-		log.Debug("chain-shieldwall applied: %s", out)
+		log.Debug("%s applied: %s", swInputChain, out)
 	}
 
 	// drop the rest
