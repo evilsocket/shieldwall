@@ -33,20 +33,20 @@ func cmd(bin string, args ...string) (string, error) {
 }
 
 func reset() error {
-	commands := []string {
-		"-P INPUT ACCEPT",
-		"-P FORWARD ACCEPT",
-		"-P OUTPUT ACCEPT",
-		"-t nat -F",
-		"-t mangle -F",
-		"-F",
-		"-X",
+	commands := []string{
+		"-F chain-shieldwall",
+		"-D INPUT -j chain-shieldwall",
+		"-X chain-shieldwall",
+		"-F LOGNDROP",
+		"-D INPUT -j LOGNDROP",
+		"-X LOGNDROP",
 	}
 
 	for _, c := range commands {
 		out, err := cmd(binary, strings.Split(c, " ")...)
 		if err != nil {
-			return err
+			log.Error("error while resetting firewall: %v", err)
+			continue
 		} else {
 			log.Debug("reset(%s): %s", c, out)
 		}
@@ -77,13 +77,27 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 		log.Debug("conntrack: %s", out)
 	}
 
+	// create custom chain
+	if out, err = cmd(binary, "-N", "chain-shieldwall"); err != nil {
+		return fmt.Errorf("error creating chain-shieldwall: %v", err)
+	} else {
+		log.Debug("chain-shieldwall: %s", out)
+	}
+
+	// Accept everything on loopback
+	if out, err = cmd(binary, "-A", "chain-shieldwall", "-i", "lo", "-j", "ACCEPT"); err != nil {
+		return fmt.Errorf("error applying loopback rule: %v", err)
+	} else {
+		log.Debug("loopback rule applied: %s", out)
+	}
+
 	// for each rule
 	for _, rule := range rules {
-		protos := []string{"tcp"}
-		if rule.Protocol == ProtoUDP {
-			protos[0] = "udp"
-		} else {
-			protos = []string{"tcp", "udp"}
+		protos := []string{"tcp", "udp"}
+		if rule.Protocol == ProtoTCP {
+			protos = []string{"tcp"}
+		} else if rule.Protocol == ProtoUDP {
+			protos = []string{"udp"}
 		}
 
 		// for each protocol
@@ -105,7 +119,7 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 			}
 
 			for _, port := range rule.Ports {
-				args := []string{"-A", "INPUT"}
+				args := []string{"-A", "chain-shieldwall"}
 				args = append(args, source...)
 				args = append(args, "-p", proto, "--dport", port, "-j", action)
 				out, err := cmd(binary, args...)
@@ -162,6 +176,13 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 		}
 
 		target = "LOGNDROP"
+	}
+
+	// Apply custom chain on INPUT
+	if out, err := cmd(binary, "-A", "INPUT", "-j", "chain-shieldwall"); err != nil {
+		return fmt.Errorf("error running chain-shieldwall rule: %v", err)
+	} else {
+		log.Debug("chain-shieldwall applied: %s", out)
 	}
 
 	// drop the rest
