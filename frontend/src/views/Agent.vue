@@ -168,13 +168,15 @@ drops:
 
           <tbody>
           <tr v-for="(rule, index) in agent.rules" :key="`rule-${index}`">
-            <td class="fit">
+
+            <td class="fit input-group-sm">
               <select class="form-control">
                 <option :selected="rule.type == 'allow'" value="allow">Allow</option>
                 <option :selected="rule.type == 'block'" value="block">Block</option>
               </select>
             </td>
-            <td class="fit">
+
+            <td class="fit input-group-sm">
               <input
                   v-model="rule.address"
                   v-validate="'required'"
@@ -183,14 +185,16 @@ drops:
                   name="address"
               />
             </td>
-            <td class="fit">
+
+            <td class="fit input-group-sm">
               <select class="form-control" v-model="rule.protocol">
                 <option :selected="rule.protocol == 'tcp'" value="tcp">TCP</option>
                 <option :selected="rule.protocol == 'udp'" value="udp">UDP</option>
                 <option :selected="rule.protocol == 'all'" value="all">All</option>
               </select>
             </td>
-            <td class="fit">
+
+            <td class="fit input-group-sm">
               <input
                   v-model="rule.ports"
                   v-validate="'required'"
@@ -200,7 +204,7 @@ drops:
               />
             </td>
 
-            <td class="fit">
+            <td class="fit input-group-sm">
               <select class="form-control" v-model.number="rule.ttl" type="number">
                 <option :selected="rule.ttl == 0" value=0>Never</option>
                 <option :selected="rule.ttl == 3" value=3>3 Seconds</option>
@@ -213,16 +217,16 @@ drops:
                 <option :selected="rule.ttl == 86400" value=86400>24 Hours</option>
               </select>
             </td>
-            <td class="fit">
+            <td class="fit input-group-sm">
               <input
                   v-model="rule.comment"
                   type="text"
-                  class="form-control"
+                  class="form-control input-small"
                   name="comment"
               />
             </td>
 
-            <td class="fit">
+            <td class="fit input-group-sm">
               <a class="btn btn-sm btn-danger" href="#" v-on:click="handleRuleDelete(agent.rules.indexOf(rule))">
                 x
               </a>
@@ -350,7 +354,8 @@ export default {
           this.$store.state.auth.user.address,
           "all",
           ["443", "80", "22"],
-          43200
+          43200,
+          'Client IP on ' + (new Date())
       ));
     },
 
