@@ -170,7 +170,7 @@ drops:
           <tr v-for="(rule, index) in agent.rules" :key="`rule-${index}`">
 
             <td class="fit input-group-sm">
-              <select class="form-control">
+              <select class="form-control" v-model="rule.type">
                 <option :selected="rule.type == 'allow'" value="allow">Allow</option>
                 <option :selected="rule.type == 'block'" value="block">Block</option>
               </select>

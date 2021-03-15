@@ -5,6 +5,12 @@
 
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
+          <a href="https://www.evilsocket.net/2021/02/13/Hide-your-servers-in-plain-sight-presenting-ShieldWall/" target="_blank" class="nav-link">
+            <font-awesome-icon icon="anchor" /> <span class="d-none d-sm-inline-block">Rationale</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a href="https://github.com/evilsocket/shieldwall/wiki" target="_blank" class="nav-link">
             <font-awesome-icon icon="archive" /> <span class="d-none d-sm-inline-block">Docs</span>
           </a>
