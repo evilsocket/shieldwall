@@ -3,13 +3,15 @@ package main
 import (
 	"flag"
 	"github.com/evilsocket/islazy/log"
+	"github.com/evilsocket/shieldwall/firewall"
 	"time"
 )
 
 var (
-	confFile = ""
-	debug    = false
-	logfile  = ""
+	confFile          = ""
+	debug             = false
+	showVersion       = false
+	logfile           = ""
 	updateCheckPeriod = time.Duration(10) * time.Minute
 )
 
@@ -17,7 +19,10 @@ func init() {
 	flag.StringVar(&confFile, "config", "/etc/shieldwall/config.yaml", "YAML configuration file.")
 	flag.BoolVar(&debug, "debug", debug, "Enable debug logs.")
 	flag.StringVar(&logfile, "log", logfile, "Log messages to this file instead of standard error.")
-	flag.DurationVar(&updateCheckPeriod, "update-check-period", updateCheckPeriod,"Self update polling period.")
+	flag.DurationVar(&updateCheckPeriod, "update-check-period", updateCheckPeriod, "Self update polling period.")
+
+	flag.BoolVar(&showVersion, "version", showVersion, "Show version and exit.")
+	flag.BoolVar(&firewall.DryRun, "dry-run", firewall.DryRun, "Do not execute firewall commands.")
 }
 
 func setupLogging() {

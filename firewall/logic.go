@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/islazy/str"
+	"github.com/evilsocket/islazy/tui"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -17,6 +18,8 @@ const (
 	swLogDropChain = "LOGNDROP"
 )
 
+var DryRun = false
+
 type DropConfig struct {
 	Log    bool   `yaml:"log"`
 	Limit  string `yaml:"limit"`
@@ -28,16 +31,21 @@ var lock = sync.Mutex{}
 
 func cmd(bin string, args ...string) (string, error) {
 	log.Debug("# %s %s", bin, args)
-	raw, err := exec.Command(bin, args...).CombinedOutput()
-	if err != nil {
-		log.Warning("%s", str.Trim(string(raw)))
-		return "", err
+	if DryRun {
+		log.Info("%s %s %s", tui.Dim("<dry run>"), bin, strings.Join(args, " "))
+		return "", nil
 	} else {
-		return str.Trim(string(raw)), nil
+		raw, err := exec.Command(bin, args...).CombinedOutput()
+		if err != nil {
+			log.Warning("%s", str.Trim(string(raw)))
+			return "", err
+		} else {
+			return str.Trim(string(raw)), nil
+		}
 	}
 }
 
-func reset() error {
+func reset(binary string) error {
 	commands := []string{
 		fmt.Sprintf("-F %s", swInputChain),
 		fmt.Sprintf("-D INPUT -j %s", swInputChain),
@@ -50,7 +58,8 @@ func reset() error {
 	for _, c := range commands {
 		out, err := cmd(binary, strings.Split(c, " ")...)
 		if err != nil {
-			log.Error("error while resetting firewall: %v", err)
+			// this is not fatal, some chains/rules might not exist yet
+			log.Warning("firewall reset: %v", err)
 			continue
 		} else {
 			log.Debug("reset(%s): %s", c, out)
@@ -63,17 +72,10 @@ func reset() error {
 func Reset() error {
 	lock.Lock()
 	defer lock.Unlock()
-	return reset()
+	return reset(binary4)
 }
 
-func Apply(rules []Rule, drops DropConfig) (err error) {
-	lock.Lock()
-	defer lock.Unlock()
-
-	if err = reset(); err != nil {
-		return fmt.Errorf("error while resetting firewall: %v", err)
-	}
-
+func allowRelated(binary string) error {
 	// allow related connections for responses to local clients (such as DNS)
 	out, err := cmd(binary, "-A", "INPUT", "-m", "conntrack", "--ctstate", "RELATED,ESTABLISHED", "-j", "ACCEPT")
 	if err != nil {
@@ -81,32 +83,119 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 	} else {
 		log.Debug("conntrack: %s", out)
 	}
+	return nil
+}
 
+func createInputChain(binary string) error {
 	// create custom chain
-	if out, err = cmd(binary, "-N", swInputChain); err != nil {
+	if out, err := cmd(binary, "-N", swInputChain); err != nil {
 		return fmt.Errorf("error creating chain-shieldwall: %v", err)
 	} else {
 		log.Debug("error creating chain %s: %s", swInputChain, out)
 	}
 
 	// Accept everything on loopback
-	if out, err = cmd(binary, "-A", swInputChain, "-i", "lo", "-j", "ACCEPT"); err != nil {
+	if out, err := cmd(binary, "-A", swInputChain, "-i", "lo", "-j", "ACCEPT"); err != nil {
 		return fmt.Errorf("error applying loopback rule: %v", err)
 	} else {
 		log.Debug("loopback rule applied: %s", out)
 	}
 
-	// for each rule
+	return nil
+}
+
+func createLogAndDropChain(binary string, drops DropConfig) error {
+	log.Debug("enabling logging of dropped packets: %#v", drops)
+
+	if out, err := cmd(binary, "-N", swLogDropChain); err != nil {
+		return fmt.Errorf("error creating %s: %v", swLogDropChain, err)
+	} else {
+		log.Debug("%s: %s", swLogDropChain, out)
+	}
+
+	out, err := cmd(binary,
+		"-A", swLogDropChain,
+		"-m", "limit", "--limit", drops.Limit,
+		"-j", "LOG",
+		"--log-prefix", fmt.Sprintf("%s: ", drops.Prefix),
+		"--log-level", strconv.FormatInt(int64(drops.Level), 10))
+	if err != nil {
+		return fmt.Errorf("error enabling logging: %v", err)
+	} else {
+		log.Debug("logging: %s", out)
+	}
+
+	if out, err = cmd(binary, "-A", swLogDropChain, "-j", "DROP"); err != nil {
+		return fmt.Errorf("error dropping LOGNDROP: %v", err)
+	} else {
+		log.Debug("dropping: %s", out)
+	}
+
+	return nil
+}
+
+func directInputTo(binary string, target string) error {
+	// Apply custom chain on INPUT
+	if out, err := cmd(binary, "-A", "INPUT", "-j", swInputChain); err != nil {
+		return fmt.Errorf("error running %s rule: %v", swInputChain, err)
+	} else {
+		log.Debug("%s applied: %s", swInputChain, out)
+	}
+
+	// drop the rest
+	if out, err := cmd(binary, "-A", "INPUT", "-j", target); err != nil {
+		return fmt.Errorf("error running drop rule: %v", err)
+	} else {
+		log.Debug("drop: %s", out)
+	}
+
+	return nil
+}
+
+func Apply(rules []Rule, drops DropConfig) (err error) {
+	binaries := [] string {
+		binary4,
+		binary6,
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+
+	for _, bin := range binaries {
+		// skip if not available
+		if bin == "" {
+			continue
+		}
+
+		if err = reset(bin); err != nil {
+			return fmt.Errorf("%s: %v", bin, err)
+		}
+
+		// allow related connections for responses to local clients (such as DNS)
+		if err = allowRelated(bin); err != nil {
+			return fmt.Errorf("%s: %v", bin, err)
+		}
+
+		if err = createInputChain(bin); err != nil {
+			return fmt.Errorf("%s: %v", bin, err)
+		}
+	}
+
+	// apply each rule
 	for _, rule := range rules {
-		protos := []string{"tcp", "udp"}
-		if rule.Protocol == ProtoTCP {
-			protos = []string{"tcp"}
-		} else if rule.Protocol == ProtoUDP {
-			protos = []string{"udp"}
+		// select either the ipv4 or ipv6 binary
+		bin := binary4
+		if rule.IPType() == IPv6 {
+			if binary6 != "" {
+				bin = binary6
+			} else {
+				log.Warning("found IPv6 rule but non ip6tables binary, ignored: %v", rule)
+				continue
+			}
 		}
 
 		// for each protocol
-		for _, proto := range protos {
+		for _, proto := range rule.Protocols() {
 			source := []string{"-s", rule.Address}
 			if rule.AddressType == AddressRange {
 				// use iprange module
@@ -127,7 +216,7 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 				args := []string{"-A", swInputChain}
 				args = append(args, source...)
 				args = append(args, "-p", proto, "--dport", port, "-j", action)
-				out, err := cmd(binary, args...)
+				out, err := cmd(bin, args...)
 				if err != nil {
 					return fmt.Errorf("error applying rule %s.%s.%s.%s: %v",
 						rule.Type,
@@ -147,55 +236,22 @@ func Apply(rules []Rule, drops DropConfig) (err error) {
 		}
 	}
 
-	target := "DROP"
-
-	// enable logging?
-	if drops.Log {
-		log.Debug("enabling logging of dropped packets: %#v", drops)
-
-		// just in case
-		// cmd(binary, "-X", "LOGNDROP");
-
-		if out, err = cmd(binary, "-N", swLogDropChain); err != nil {
-			return fmt.Errorf("error creating %s: %v", swLogDropChain, err)
-		} else {
-			log.Debug("%s: %s", swLogDropChain, out)
+	for _, bin := range binaries {
+		// just drop by default
+		target := "DROP"
+		// enable logging?
+		if drops.Log {
+			if err = createLogAndDropChain(bin, drops); err != nil {
+				return fmt.Errorf("%s: %v", bin, err)
+			}
+			// first log then drop
+			target = swLogDropChain
 		}
-
-		out, err := cmd(binary,
-			"-A", swLogDropChain,
-			"-m", "limit", "--limit", drops.Limit,
-			"-j", "LOG",
-			"--log-prefix", fmt.Sprintf("%s: ", drops.Prefix),
-			"--log-level", strconv.FormatInt(int64(drops.Level), 10))
-		if err != nil {
-			return fmt.Errorf("error enabling logging: %v", err)
-		} else {
-			log.Debug("logging: %s", out)
+		// this is what drops everything else
+		if err = directInputTo(bin, target); err != nil {
+			return fmt.Errorf("%s: %v", bin, err)
 		}
-
-		if out, err = cmd(binary, "-A", swLogDropChain, "-j", "DROP"); err != nil {
-			return fmt.Errorf("error dropping LOGNDROP: %v", err)
-		} else {
-			log.Debug("dropping: %s", out)
-		}
-
-		target = swLogDropChain
 	}
 
-	// Apply custom chain on INPUT
-	if out, err := cmd(binary, "-A", "INPUT", "-j", swInputChain); err != nil {
-		return fmt.Errorf("error running %s rule: %v", swInputChain, err)
-	} else {
-		log.Debug("%s applied: %s", swInputChain, out)
-	}
-
-	// drop the rest
-	if out, err := cmd(binary, "-A", "INPUT", "-j", target); err != nil {
-		return fmt.Errorf("error running drop rule: %v", err)
-	} else {
-		log.Debug("drop: %s", out)
-	}
-
-	return
+	return nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/firewall"
 	"github.com/evilsocket/shieldwall/version"
@@ -12,10 +13,10 @@ import (
 )
 
 var (
-	err               = (error)(nil)
-	conf              = (* Config)(nil)
-	state             = (*State)(nil)
-	signals           = make(chan os.Signal, 1)
+	err     = (error)(nil)
+	conf    = (* Config)(nil)
+	state   = (*State)(nil)
+	signals = make(chan os.Signal, 1)
 )
 
 func signalHandler() {
@@ -39,6 +40,11 @@ func addAllowRules(s *State) {
 
 func main() {
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("shiedwall agent v%s\n", version.Version)
+		return
+	}
 
 	setupLogging()
 	go signalHandler()
