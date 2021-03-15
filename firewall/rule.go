@@ -52,6 +52,7 @@ type Rule struct {
 	AddressType AddressType `json:"address_type"`
 	Protocol    Protocol    `json:"protocol"`
 	Ports       []string    `json:"ports"` // strings to also allow ranges
+	Comment     string      `json:"comment"`
 }
 
 func (r Rule) Expires() bool {

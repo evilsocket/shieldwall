@@ -139,6 +139,13 @@ drops:
             +
           </a>
 
+          <a class="btn btn-sm"
+             href="#"
+             title="Create rules for CloudFlare subnets."
+             v-on:click.prevent="handleCf()">
+            <img style="height: 60px; margin-top: 4px" src="/cf.png"/>
+          </a>
+
           <span class="float-right d-inline">
             <small style="font-size: 0.9rem">
               <a href="https://github.com/evilsocket/shieldwall/wiki/Rules" target="_blank">Help</a>
@@ -154,6 +161,7 @@ drops:
             <th scope="col">Proto</th>
             <th scope="col">Ports</th>
             <th scope="col">Expires</th>
+            <th scope="col">Comment</th>
             <th scope="col"></th>
           </tr>
           </thead>
@@ -204,6 +212,14 @@ drops:
                 <option :selected="rule.ttl == 43200" value=43200>12 Hours</option>
                 <option :selected="rule.ttl == 86400" value=86400>24 Hours</option>
               </select>
+            </td>
+            <td class="fit">
+              <input
+                  v-model="rule.comment"
+                  type="text"
+                  class="form-control"
+                  name="comment"
+              />
             </td>
 
             <td class="fit">
@@ -336,6 +352,30 @@ export default {
           ["443", "80", "22"],
           43200
       ));
+    },
+
+    handleCf() {
+    UserService.getCloudFlareSubnets().then(
+          response => {
+            for(let i in response.data) {
+              let subnet = response.data[i];
+              this.agent.rules.push(new Rule(
+                  "allow",
+                  subnet,
+                  "tcp",
+                  ["443", "80"],
+                  0,
+                  "CloudFlare"
+              ));
+            }
+          },
+          error => {
+            this.error =
+                (error.response && error.response.data && error.response.data.error) ||
+                error.error ||
+                error.toString();
+          }
+      );
     }
   }
 };

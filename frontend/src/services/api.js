@@ -29,3 +29,5 @@ export const API_USER_UPDATE_URL = API_BASE_URL + '/user/';
 
 export const API_AGENTS_URL = API_BASE_URL + '/user/agents';
 export const API_NEW_AGENT_URL = API_AGENTS_URL + '/new';
+
+export const API_SUBNETS_URL = API_BASE_URL + '/subnets';

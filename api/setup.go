@@ -59,6 +59,11 @@ func Setup(config Config, email EmailConfig, sendmail *mailer.Mailer) *API {
 		r.Route("/v1", func(r chi.Router) {
 			r.Get("/rules", api.GetRules)
 
+			r.Route("/subnets", func(r chi.Router) {
+				r.Use(httprate.LimitByIP(1, 1*time.Second))
+				r.Get("/cloudflare", api.GetCloudflareSubnets)
+			})
+
 			r.Route("/user", func(r chi.Router) {
 				r.Use(httprate.LimitByIP(2, 1*time.Second))
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import authHeader from './auth-header';
-import {API_AGENTS_URL, API_USER_UPDATE_URL, API_NEW_AGENT_URL} from "@/services/api";
+import {API_AGENTS_URL, API_USER_UPDATE_URL, API_NEW_AGENT_URL, API_SUBNETS_URL} from "@/services/api";
 
 class UserService {
   getUserAgents() {
@@ -28,6 +28,10 @@ class UserService {
 
   updateAgent(agent) {
     return axios.put(API_AGENTS_URL + '/' + agent.id, agent, { headers: authHeader() });
+  }
+
+  getCloudFlareSubnets() {
+    return axios.get(API_SUBNETS_URL + '/cloudflare', { headers: authHeader() });
   }
 }
 
