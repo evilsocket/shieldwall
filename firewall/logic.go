@@ -77,7 +77,7 @@ func reset(binary string) error {
 		out, err := cmd(binary, strings.Split(c, " ")...)
 		if err != nil {
 			// this is not fatal, some chains/rules might not exist yet
-			log.Warning("firewall reset: %v", err)
+			log.Debug("firewall reset: %v", err)
 			continue
 		} else {
 			log.Debug("reset(%s): %s", c, out)
