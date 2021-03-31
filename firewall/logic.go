@@ -46,6 +46,20 @@ func cmd(bin string, args ...string) (string, error) {
 }
 
 func reset(binary string) error {
+	// due to a bug, RELATED rules were added but not deleted, check how many we have and delete each one
+	out, _ := cmd(binary, "-nL")
+	matches := 0 // at least once
+	for _, line := range str.SplitBy(out, "\n") {
+		if strings.Contains(line, "RELATED,ESTABLISHED") &&
+			strings.Contains(line, "ACCEPT") {
+			matches++
+		}
+	}
+
+	if matches > 0 {
+		log.Debug("cleaning %d zombie ESTABLISHED rules", matches)
+	}
+
 	commands := []string{
 		fmt.Sprintf("-F %s", swInputChain),
 		fmt.Sprintf("-D INPUT -j %s", swInputChain),
@@ -53,6 +67,10 @@ func reset(binary string) error {
 		fmt.Sprintf("-F %s", swLogDropChain),
 		fmt.Sprintf("-D INPUT -j %s", swLogDropChain),
 		fmt.Sprintf("-X %s", swLogDropChain),
+	}
+
+	for i := 0; i < matches; i++ {
+		commands = append(commands, "-D INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT")
 	}
 
 	for _, c := range commands {
@@ -67,12 +85,6 @@ func reset(binary string) error {
 	}
 
 	return nil
-}
-
-func Reset() error {
-	lock.Lock()
-	defer lock.Unlock()
-	return reset(binary4)
 }
 
 func allowRelated(binary string) error {
@@ -153,7 +165,7 @@ func directInputTo(binary string, target string) error {
 }
 
 func Apply(rules []Rule, drops DropConfig) (err error) {
-	binaries := [] string {
+	binaries := []string{
 		binary4,
 		binary6,
 	}
