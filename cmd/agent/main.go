@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/evilsocket/islazy/log"
@@ -8,6 +10,7 @@ import (
 	"github.com/evilsocket/shieldwall/version"
 	"os"
 	"os/signal"
+	"sort"
 	"syscall"
 	"time"
 )
@@ -36,6 +39,26 @@ func addAllowRules(s *State) {
 			Ports:    []string{firewall.AllPorts},
 		})
 	}
+}
+
+func hashObject(v interface{}) (string, error) {
+	if raw, err := json.Marshal(v); err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("%x", sha256.Sum256(raw)), nil
+	}
+}
+
+func rulesHash(rules []firewall.Rule) string {
+	// make sure the order is always the same
+	sort.Slice(rules, func(i, j int) bool {
+		return rules[i].CreatedAt.Before(rules[j].CreatedAt)
+	})
+	hash, err := hashObject(rules)
+	if err != nil {
+		log.Warning("can't hash rules: %v", err)
+	}
+	return hash
 }
 
 func main() {
@@ -83,24 +106,22 @@ func main() {
 	api := NewAPI(conf.API)
 	// main loop
 	for {
-		prev := len(state.Rules)
-
+		prevHash := rulesHash(state.Rules)
 		if rules, err := api.FetchRules(); err != nil {
 			log.Error("error polling api: %v", err)
 		} else {
 			state.Rules = rules
-
 			if len(conf.Allow) > 0 {
 				addAllowRules(state)
 			}
-
-			num := len(state.Rules)
-			if num != prev {
-				log.Info("applying %d rules", num)
-			}
-
-			if err = firewall.Apply(state.Rules, conf.Drops); err != nil {
-				log.Fatal("%v", err)
+			newHash := rulesHash(state.Rules)
+			if prevHash != newHash {
+				log.Info("applying %d rules", len(state.Rules))
+				if err = firewall.Apply(state.Rules, conf.Drops); err != nil {
+					log.Fatal("%v", err)
+				}
+	 		} else {
+	 			log.Debug("no changes")
 			}
 		}
 
