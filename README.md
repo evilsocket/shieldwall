@@ -15,7 +15,7 @@
   </p>
 </p>
 
-ShieldWall embraces the zero-trust principle and instruments your server firewall to block inbound connections from every IP on any port, by default. The website allows you to push policies to your agents and temporarily unlock certain ports from your IP.
+ShieldWall embraces the [zero-trust principle](https://techster.wiki/zero-trust-security-model) and instruments your server firewall to block inbound connections from every IP on any port, by default. The website allows you to push policies to your agents and temporarily unlock certain ports from your IP.
 
 [More on this project.](https://www.evilsocket.net/2021/02/13/Hide-your-servers-in-plain-sight-presenting-ShieldWall/)
 
