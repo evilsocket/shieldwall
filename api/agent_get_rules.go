@@ -74,6 +74,7 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 
 	agent.SeenAt = time.Now()
 	agent.Address = agentIP
+	agent.Hostname = ResolveHostname(agentIP, nil)
 	agent.UserAgent = agentUA
 
 	if err = agent.Save(); err != nil {

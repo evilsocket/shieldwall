@@ -51,7 +51,10 @@
           </a>
         </td>
         <td class="fit">
-          <small v-if="agent.address">{{ agent.address }}</small>
+          <small v-if="agent.address">
+            {{ agent.address }}
+            <span v-if="agent.hostname" class="text-muted"> ({{ agent.hostname }})</span>
+          </small>
           <small v-if="!agent.address" class="text-muted">not seen yet</small>
         </td>
         <td class="fit">

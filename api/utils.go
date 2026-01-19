@@ -1,14 +1,32 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/evilsocket/islazy/log"
 )
+
+// DNSResolver interface for reverse DNS lookups, allows mocking in tests
+type DNSResolver interface {
+	LookupAddr(ctx context.Context, addr string) ([]string, error)
+}
+
+// defaultResolver uses net.DefaultResolver for DNS lookups
+type defaultResolver struct{}
+
+func (r *defaultResolver) LookupAddr(ctx context.Context, addr string) ([]string, error) {
+	return net.DefaultResolver.LookupAddr(ctx, addr)
+}
+
+// DefaultDNSResolver is the default resolver instance
+var DefaultDNSResolver DNSResolver = &defaultResolver{}
 
 var (
 	ErrEmpty           = errors.New("")
@@ -121,4 +139,30 @@ func ERROR(w http.ResponseWriter, statusCode int, err error) {
 		return
 	}
 	JSON(w, http.StatusBadRequest, nil)
+}
+
+// ResolveHostname performs a reverse DNS lookup for the given IP address
+// and returns the hostname. If the lookup fails or times out, it returns
+// an empty string. The resolver parameter allows for dependency injection
+// in tests; if nil, the default resolver is used.
+func ResolveHostname(ipAddress string, resolver DNSResolver) string {
+	if resolver == nil {
+		resolver = DefaultDNSResolver
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	names, err := resolver.LookupAddr(ctx, ipAddress)
+	if err != nil {
+		log.Debug("reverse DNS lookup failed for %s: %v", ipAddress, err)
+		return ""
+	}
+
+	if len(names) > 0 {
+		hostname := strings.TrimSuffix(names[0], ".")
+		return hostname
+	}
+
+	return ""
 }

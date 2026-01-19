@@ -22,6 +22,7 @@ type Agent struct {
 	Rules       datatypes.JSON `sql:"type:jsonb" json:"rules"`
 	Token       string         `gorm:"index" json:"token"`
 	Address     string         `json:"address"`
+	Hostname    string         `json:"hostname"`
 	UserAgent   string         `json:"user_agent"`
 }
 
