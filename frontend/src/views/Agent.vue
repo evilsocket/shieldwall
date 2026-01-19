@@ -129,6 +129,77 @@ drops:
           >{{ errors.first('token') }}
           </div>
         </div>
+
+        <div class="form-group" v-if="agent.resources">
+          <label><strong>Resource Usage</strong></label>
+          <div class="resource-panel">
+            <div class="resource-item">
+              <span class="resource-label">CPU</span>
+              <div class="progress">
+                <div class="progress-bar" :class="getCpuBarClass(agent.resources.cpu_percent)"
+                     role="progressbar" :style="{ width: agent.resources.cpu_percent + '%' }">
+                  {{ formatPercent(agent.resources.cpu_percent) }}
+                </div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Memory</span>
+              <div class="progress">
+                <div class="progress-bar" :class="getMemBarClass(agent.resources.memory_percent)"
+                     role="progressbar" :style="{ width: agent.resources.memory_percent + '%' }">
+                  {{ formatPercent(agent.resources.memory_percent) }}
+                </div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Memory Used</span>
+              <span class="resource-value">{{ formatBytes(agent.resources.memory_used) }}</span>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Goroutines</span>
+              <span class="resource-value">{{ agent.resources.num_goroutines }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" v-if="agent.interfaces && agent.interfaces.length">
+          <label><strong>Network Interfaces</strong></label>
+          <div class="interfaces-panel">
+            <table class="table table-sm table-striped">
+              <thead class="thead-light">
+              <tr>
+                <th>Name</th>
+                <th>MAC Address</th>
+                <th>Addresses</th>
+                <th>MTU</th>
+                <th>Flags</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="iface in agent.interfaces" :key="iface.name"
+                  :class="{ 'table-primary': iface.name === agent.active_interface }">
+                <td>
+                  <strong>{{ iface.name }}</strong>
+                  <span v-if="iface.name === agent.active_interface" class="badge badge-success ml-1">active</span>
+                </td>
+                <td><code>{{ iface.mac_address || '-' }}</code></td>
+                <td>
+                  <span v-for="(addr, idx) in iface.addresses" :key="idx" class="badge badge-secondary mr-1">
+                    {{ addr }}
+                  </span>
+                  <span v-if="!iface.addresses || !iface.addresses.length">-</span>
+                </td>
+                <td>{{ iface.mtu }}</td>
+                <td>
+                  <span v-for="(flag, idx) in iface.flags" :key="idx" class="badge badge-info mr-1">
+                    {{ flag }}
+                  </span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </span>
 
       <div class="form-group table-responsive">
@@ -381,6 +452,31 @@ export default {
                 error.toString();
           }
       );
+    },
+
+    formatPercent(value) {
+      if (value === undefined || value === null) return '-';
+      return value.toFixed(1) + '%';
+    },
+
+    formatBytes(bytes) {
+      if (bytes === undefined || bytes === null || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    },
+
+    getCpuBarClass(value) {
+      if (value > 80) return 'bg-danger';
+      if (value > 50) return 'bg-warning';
+      return 'bg-success';
+    },
+
+    getMemBarClass(value) {
+      if (value > 80) return 'bg-danger';
+      if (value > 50) return 'bg-warning';
+      return 'bg-success';
     }
   }
 };
@@ -397,5 +493,54 @@ export default {
   height: fit-content;
   background-color: #212529;
   color: white;
+}
+
+.resource-panel {
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.resource-item:last-child {
+  margin-bottom: 0;
+}
+
+.resource-label {
+  width: 100px;
+  font-weight: 500;
+}
+
+.resource-value {
+  font-family: monospace;
+}
+
+.resource-item .progress {
+  flex: 1;
+  height: 20px;
+}
+
+.resource-item .progress-bar {
+  font-size: 0.75rem;
+  line-height: 20px;
+}
+
+.interfaces-panel {
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.interfaces-panel .table {
+  margin-bottom: 0;
+}
+
+.interfaces-panel code {
+  font-size: 0.8rem;
 }
 </style>

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/evilsocket/islazy/log"
@@ -36,13 +37,29 @@ func (a API) FetchRules() ([]firewall.Rule, error) {
 
 	log.Debug("polling %s", url)
 
-	req, err := http.NewRequest("GET", url, nil)
+	// collect and send resource information
+	var body *bytes.Buffer
+	if resources, err := collectResources(); err != nil {
+		log.Warning("error collecting resources: %v", err)
+		body = bytes.NewBuffer([]byte("{}"))
+	} else {
+		jsonData, err := json.Marshal(resources)
+		if err != nil {
+			log.Warning("error marshaling resources: %v", err)
+			body = bytes.NewBuffer([]byte("{}"))
+		} else {
+			body = bytes.NewBuffer(jsonData)
+		}
+	}
+
+	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
 	}
 
 	// agent authentication
 	req.Header.Set("X-ShieldWall-Agent-Token", a.config.Token)
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", fmt.Sprintf(
 		"ShieldWall Agent v%s (%s %s)",
 		version.Version,

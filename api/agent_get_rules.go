@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shieldwall/database"
 	"net/http"
@@ -16,6 +17,16 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 		log.Warning("[%s %s] received rules request with no token", agentIP, agentUA)
 		JSON(w, http.StatusBadRequest, nil)
 		return
+	}
+
+	// parse resource information from POST body if present
+	var resources *database.AgentResources
+	if r.Method == http.MethodPost && r.Body != nil {
+		resources = &database.AgentResources{}
+		if err := json.NewDecoder(r.Body).Decode(resources); err != nil {
+			log.Debug("could not decode resources from agent: %v", err)
+			resources = nil
+		}
 	}
 
 	cacheWhat := "miss"
@@ -39,6 +50,10 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 			// bypass and invalidate cache if there are expired rules
 			// in order to cache a fresh copy of the model
 			if expired == 0 {
+				// still update resources even when cache hit
+				if resources != nil {
+					go api.updateAgentResources(agentToken, agentIP, agentUA, resources)
+				}
 				w.Header().Set("shieldwall-cache", "hit")
 				JSON(w, http.StatusOK, cached.Rules)
 				return
@@ -76,6 +91,17 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 	agent.Address = agentIP
 	agent.UserAgent = agentUA
 
+	// update resource information if provided
+	if resources != nil {
+		if interfacesJSON, err := json.Marshal(resources.Interfaces); err == nil {
+			agent.Interfaces = interfacesJSON
+		}
+		agent.ActiveInterface = resources.ActiveInterface
+		if resourcesJSON, err := json.Marshal(resources.Resources); err == nil {
+			agent.Resources = resourcesJSON
+		}
+	}
+
 	if err = agent.Save(); err != nil {
 		log.Error("error updating agent: %v", err)
 	}
@@ -87,4 +113,30 @@ func (api *API) GetRules(w http.ResponseWriter, r *http.Request) {
 	})
 
 	JSON(w, http.StatusOK, agent.Rules)
+}
+
+// updateAgentResources updates resource info asynchronously during cache hits
+func (api *API) updateAgentResources(token, ip, ua string, resources *database.AgentResources) {
+	agent, err := database.FindAgentByToken(token)
+	if err != nil || agent == nil {
+		return
+	}
+
+	agent.SeenAt = time.Now()
+	agent.Address = ip
+	agent.UserAgent = ua
+
+	if resources != nil {
+		if interfacesJSON, err := json.Marshal(resources.Interfaces); err == nil {
+			agent.Interfaces = interfacesJSON
+		}
+		agent.ActiveInterface = resources.ActiveInterface
+		if resourcesJSON, err := json.Marshal(resources.Resources); err == nil {
+			agent.Resources = resourcesJSON
+		}
+	}
+
+	if err = agent.Save(); err != nil {
+		log.Error("error updating agent resources: %v", err)
+	}
 }

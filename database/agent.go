@@ -9,20 +9,23 @@ import (
 )
 
 type Agent struct {
-	ID          uint           `gorm:"primarykey" json:"id"`
-	CreatedAt   time.Time      `gorm:"index" json:"created_at"`
-	UpdatedAt   time.Time      `gorm:"index" json:"updated_at"`
-	SeenAt      time.Time      `gorm:"index" json:"seen_at"`
-	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
-	UserID      uint           `gorm:"index" json:"-"`
-	AlertAfter  uint           `gorm:"index" json:"alert_after"`
-	AlertPeriod uint           `gorm:"index" json:"alert_period"`
-	AlertAt     time.Time      `gorm:"index" json:"alert_at"`
-	Name        string         `json:"name"`
-	Rules       datatypes.JSON `sql:"type:jsonb" json:"rules"`
-	Token       string         `gorm:"index" json:"token"`
-	Address     string         `json:"address"`
-	UserAgent   string         `json:"user_agent"`
+	ID              uint           `gorm:"primarykey" json:"id"`
+	CreatedAt       time.Time      `gorm:"index" json:"created_at"`
+	UpdatedAt       time.Time      `gorm:"index" json:"updated_at"`
+	SeenAt          time.Time      `gorm:"index" json:"seen_at"`
+	DeletedAt       gorm.DeletedAt `gorm:"index" json:"-"`
+	UserID          uint           `gorm:"index" json:"-"`
+	AlertAfter      uint           `gorm:"index" json:"alert_after"`
+	AlertPeriod     uint           `gorm:"index" json:"alert_period"`
+	AlertAt         time.Time      `gorm:"index" json:"alert_at"`
+	Name            string         `json:"name"`
+	Rules           datatypes.JSON `sql:"type:jsonb" json:"rules"`
+	Token           string         `gorm:"index" json:"token"`
+	Address         string         `json:"address"`
+	UserAgent       string         `json:"user_agent"`
+	Interfaces      datatypes.JSON `sql:"type:jsonb" json:"interfaces"`
+	ActiveInterface string         `json:"active_interface"`
+	Resources       datatypes.JSON `sql:"type:jsonb" json:"resources"`
 }
 
 func (a *Agent) Save() error {

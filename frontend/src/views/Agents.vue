@@ -26,6 +26,8 @@
         <th scope="col">Name</th>
         <th scope="col">Address</th>
         <th scope="col">Version</th>
+        <th scope="col">Interface</th>
+        <th scope="col">Resources</th>
         <th scope="col">Rules</th>
         <th scope="col"></th>
       </tr>
@@ -57,6 +59,21 @@
         <td class="fit">
           <small v-if="agent.user_agent">{{ agent.user_agent.replace('ShieldWall Agent ', '') }}</small>
           <small v-if="!agent.user_agent" class="text-muted">not seen yet</small>
+        </td>
+        <td class="fit">
+          <small v-if="agent.active_interface">{{ agent.active_interface }}</small>
+          <small v-if="!agent.active_interface" class="text-muted">-</small>
+        </td>
+        <td class="fit">
+          <span v-if="agent.resources">
+            <small class="resource-badge" :class="getCpuClass(agent.resources.cpu_percent)">
+              CPU {{ formatPercent(agent.resources.cpu_percent) }}
+            </small>
+            <small class="resource-badge" :class="getMemClass(agent.resources.memory_percent)">
+              MEM {{ formatPercent(agent.resources.memory_percent) }}
+            </small>
+          </span>
+          <small v-if="!agent.resources" class="text-muted">-</small>
         </td>
         <td class="fit">
           <span v-if="agent.rules.length" class="badge badge-info">{{ agent.rules.length }}</span>
@@ -118,6 +135,25 @@ export default {
   },
 
   methods: {
+    formatPercent(value) {
+      if (value === undefined || value === null) return '-';
+      return value.toFixed(1) + '%';
+    },
+
+    getCpuClass(value) {
+      if (value === undefined || value === null) return '';
+      if (value > 80) return 'resource-high';
+      if (value > 50) return 'resource-medium';
+      return 'resource-low';
+    },
+
+    getMemClass(value) {
+      if (value === undefined || value === null) return '';
+      if (value > 80) return 'resource-high';
+      if (value > 50) return 'resource-medium';
+      return 'resource-low';
+    },
+
     handleAgentDelete(agent) {
       if (confirm("Are you sure you want to delete " + agent.name + ' ?')) {
 
@@ -154,5 +190,28 @@ export default {
 .table th.fit {
   white-space: nowrap;
   width: 1%;
+}
+
+.resource-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 4px;
+  font-size: 0.75rem;
+}
+
+.resource-low {
+  background-color: #28a745;
+  color: white;
+}
+
+.resource-medium {
+  background-color: #ffc107;
+  color: black;
+}
+
+.resource-high {
+  background-color: #dc3545;
+  color: white;
 }
 </style>
